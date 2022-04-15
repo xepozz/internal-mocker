@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Xepozz\InternalFunctionMocker\Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
-use Xepozz\InternalFunctionMocker\MockerConfig;
+use Xepozz\InternalFunctionMocker\MockerState;
 
 class StrContainsTest extends TestCase
 {
@@ -33,7 +33,7 @@ class StrContainsTest extends TestCase
     {
         $obj = new StrContains();
 
-        MockerConfig::addCondition(
+        MockerState::addCondition(
             'Xepozz\InternalFunctionMocker\Tests\Integration',
             'str_contains',
             ['string4', 'str'],

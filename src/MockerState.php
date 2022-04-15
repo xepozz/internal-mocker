@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Xepozz\InternalFunctionMocker;
 
-class MockerConfig
+final class MockerState
 {
     private static array $state = [];
 
@@ -14,7 +14,7 @@ class MockerConfig
             return;
         }
 
-        static::$state[$namespace][$functionName][] = [
+        self::$state[$namespace][$functionName][] = [
             'namespace' => $namespace,
             'name' => $functionName,
             'result' => $result,
@@ -24,7 +24,7 @@ class MockerConfig
 
     public static function checkCondition(string $namespace, string $functionName, array $expectedArguments): bool
     {
-        $mocks = static::$state[$namespace][$functionName] ?? [];
+        $mocks = self::$state[$namespace][$functionName] ?? [];
 
         foreach ($mocks as $mock) {
             if (self::compareArguments($mock['arguments'], $expectedArguments)) {
@@ -41,7 +41,7 @@ class MockerConfig
 
     private static function replaceResult(string $namespace, string $functionName, array $arguments, $result): void
     {
-        $mocks = static::$state[$namespace][$functionName] ?? [];
+        $mocks = self::$state[$namespace][$functionName] ?? [];
 
         foreach ($mocks as &$mock) {
             if ($mock['arguments'] === $arguments) {
@@ -52,7 +52,7 @@ class MockerConfig
 
     public static function getResult(string $namespace, string $functionName, array $expectedArguments)
     {
-        $mocks = static::$state[$namespace][$functionName] ?? [];
+        $mocks = self::$state[$namespace][$functionName] ?? [];
 
         foreach ($mocks as $mock) {
             if (self::compareArguments($mock['arguments'], $expectedArguments)) {

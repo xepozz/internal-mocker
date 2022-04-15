@@ -5,7 +5,7 @@ namespace Xepozz\InternalFunctionMocker;
 
 use Yiisoft\VarDumper\VarDumper;
 
-class Mocker
+final class Mocker
 {
     private string $path;
 
@@ -14,7 +14,7 @@ class Mocker
         $this->path = $path;
     }
 
-    public function load(array $mocks)
+    public function load(array $mocks): void
     {
         $data = "<?php\n\n";
         $data .= $this->generate($mocks);
@@ -24,7 +24,7 @@ class Mocker
         require $this->getConfigPath();
     }
 
-    public function generate(array $mocks)
+    public function generate(array $mocks): string
     {
         $mocks = $this->normalizeMocks($mocks);
         $mockerConfig = ['namespace ' . __NAMESPACE__ . ';'];
@@ -37,7 +37,7 @@ class Mocker
                     $argumentsString = VarDumper::create($imock['arguments'])->export(false);
                     $resultString = VarDumper::create($imock['result'])->export(false);
                     $mockerConfig[] = <<<PHP
-MockerConfig::addCondition(
+MockerState::addCondition(
     "$namespace", 
     "$functionName",
     {$argumentsString},
@@ -52,7 +52,7 @@ PHP;
         foreach ($mocks as $namespace => $functions) {
             $innerOutputsString = $this->generateFunction($functions);
 
-            $mockerConfigClassName = MockerConfig::class;
+            $mockerConfigClassName = MockerState::class;
 
             $outputs[] = <<<PHP
 namespace {$namespace};
@@ -89,8 +89,8 @@ PHP;
             $string = <<<PHP
             function {$functionName}(...\$arguments)
             {
-                if (MockerConfig::checkCondition(__NAMESPACE__, "$functionName", \$arguments)) {
-                    return MockerConfig::getResult(__NAMESPACE__, "$functionName", \$arguments);
+                if (MockerState::checkCondition(__NAMESPACE__, "$functionName", \$arguments)) {
+                    return MockerState::getResult(__NAMESPACE__, "$functionName", \$arguments);
                 }
                 return \\{$functionName}(...\$arguments);
             }

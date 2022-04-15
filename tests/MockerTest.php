@@ -5,7 +5,7 @@ namespace Xepozz\InternalFunctionMocker\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Xepozz\InternalFunctionMocker\Mocker;
-use Xepozz\InternalFunctionMocker\MockerConfig;
+use Xepozz\InternalFunctionMocker\MockerState;
 
 final class MockerTest extends TestCase
 {
@@ -34,7 +34,7 @@ final class MockerTest extends TestCase
                 ],
                 <<<PHP
                 namespace Xepozz\InternalFunctionMocker;
-                MockerConfig::addCondition(
+                MockerState::addCondition(
                     "Xepozz\InternalFunctionMocker\Tests\Integration", 
                     "time",
                     [],
@@ -44,12 +44,12 @@ final class MockerTest extends TestCase
                 
                 namespace Xepozz\InternalFunctionMocker\Tests\Integration;
                 
-                use Xepozz\InternalFunctionMocker\MockerConfig;
+                use Xepozz\InternalFunctionMocker\MockerState;
                 
                 function time(...\$arguments)
                 {
-                    if (MockerConfig::checkCondition(__NAMESPACE__, "time", \$arguments)) {
-                        return MockerConfig::getResult(__NAMESPACE__, "time", \$arguments);
+                    if (MockerState::checkCondition(__NAMESPACE__, "time", \$arguments)) {
+                        return MockerState::getResult(__NAMESPACE__, "time", \$arguments);
                     }
                     return \\time(...\$arguments);
                 }
@@ -78,13 +78,13 @@ final class MockerTest extends TestCase
                 ],
                 <<<PHP
                 namespace Xepozz\InternalFunctionMocker;
-                MockerConfig::addCondition(
+                MockerState::addCondition(
                     "Xepozz\InternalFunctionMocker\Tests\Integration", 
                     "str_contains",
                     ['haystack' => 'string','needle' => 'str'],
                     false
                 );
-                MockerConfig::addCondition(
+                MockerState::addCondition(
                     "Xepozz\InternalFunctionMocker\Tests\Integration", 
                     "str_contains",
                     ['haystack' => 'string2','needle' => 'str'],
@@ -94,12 +94,12 @@ final class MockerTest extends TestCase
 
                 namespace Xepozz\InternalFunctionMocker\Tests\Integration;
                 
-                use Xepozz\InternalFunctionMocker\MockerConfig;
+                use Xepozz\InternalFunctionMocker\MockerState;
 
                 function str_contains(...\$arguments)
                 {
-                    if (MockerConfig::checkCondition(__NAMESPACE__, "str_contains", \$arguments)) {
-                        return MockerConfig::getResult(__NAMESPACE__, "str_contains", \$arguments);
+                    if (MockerState::checkCondition(__NAMESPACE__, "str_contains", \$arguments)) {
+                        return MockerState::getResult(__NAMESPACE__, "str_contains", \$arguments);
                     }
                     return \str_contains(...\$arguments);
                 }
