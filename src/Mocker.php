@@ -27,18 +27,39 @@ class Mocker
     public function generate(array $mocks)
     {
         $mocks = $this->normalizeMocks($mocks);
+        $mockerConfig = ["namespace Xepozz\InternalFunctionMock;"];
+        foreach ($mocks as $namespace => $functions) {
+            foreach ($functions as $functionName => $imocks) {
+                foreach ($imocks as $imock) {
+                    $argumentsString = VarDumper::create($imock['arguments'])->export(false);
+                    $resultString = VarDumper::create($imock['result'])->export(false);
+                    $mockerConfig[] = <<<PHP
+MockerConfig::addCondition(
+    "$namespace", 
+    "$functionName",
+    {$argumentsString},
+    {$resultString}
+);
+PHP;
+
+                }
+            }
+        }
         $outputs = [];
         foreach ($mocks as $namespace => $functions) {
             $innerOutputsString = $this->generateFunction($functions);
 
             $outputs[] = <<<PHP
 namespace {$namespace};
-{
+
+use Xepozz\InternalFunctionMock\MockerConfig;
+
 $innerOutputsString
-}
 PHP;
         }
-        return implode("\n", $outputs);
+
+
+        return implode("\n", $mockerConfig) . "\n\n\n" . implode("\n", $outputs);
     }
 
     private function normalizeMocks(array $mocks): array
@@ -59,48 +80,19 @@ PHP;
     {
         $innerOutputs = [];
         foreach ($grouppedMocks as $functionName => $mocks) {
-            $conditions = [];
-            foreach ($mocks as $mock) {
-                $conditions[] = $this->generateConditions($mock);
-            }
-            $conditionsString = implode("\n", $conditions);
-
             $string = <<<PHP
             function {$functionName}(...\$arguments)
             {
-            $conditionsString
+                if (MockerConfig::checkCondition(__NAMESPACE__, "$functionName", \$arguments)) {
+                    return MockerConfig::getResult(__NAMESPACE__, "$functionName", \$arguments);
+                }
                 return \\{$functionName}(...\$arguments);
             }
             PHP;
-            $innerOutputs [] = $this->padString($string, 4);
+            $innerOutputs[] = $string;
         }
 
-        return implode("\n", $innerOutputs);
-    }
-
-    private function generateConditions(array $mock): string
-    {
-        $flatArguments = VarDumper::create(array_values($mock['arguments']))->export(false);
-        $namedArguments = VarDumper::create($mock['arguments'])->export(false);
-        $result = VarDumper::create($mock['result'])->export();
-
-        $string = <<<PHP
-if (\$arguments === {$namedArguments} || \$arguments === {$flatArguments}) {
-    return {$result};
-}
-PHP;
-        return $this->padString($string, 4);
-    }
-
-    private function padString(string $string, int $spaces): string
-    {
-        $result = [];
-        $rows = explode("\n", $string);
-
-        foreach ($rows as $row) {
-            $result[] = str_repeat(' ', $spaces) . $row;
-        }
-        return implode("\n", $result);
+        return implode("\n\n", $innerOutputs);
     }
 
     public function getConfigPath(): string

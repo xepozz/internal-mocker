@@ -5,6 +5,7 @@ namespace Xepozz\InternalFunctionMock\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Xepozz\InternalFunctionMock\Mocker;
+use Xepozz\InternalFunctionMock\MockerConfig;
 
 final class MockerTest extends TestCase
 {
@@ -13,6 +14,7 @@ final class MockerTest extends TestCase
      */
     public function testGenerate(array $mocks, string $expected)
     {
+//        $this->markTestSkipped();
         $mocker = new Mocker(__DIR__ . '/data/mocks.php');
 
         $this->assertEquals($expected, $mocker->generate($mocks));
@@ -31,15 +33,25 @@ final class MockerTest extends TestCase
                     ],
                 ],
                 <<<PHP
+                namespace Xepozz\InternalFunctionMock;
+                MockerConfig::addCondition(
+                    "Xepozz\InternalFunctionMock\Tests\Integration", 
+                    "time",
+                    [],
+                    555
+                );
+                
+                
                 namespace Xepozz\InternalFunctionMock\Tests\Integration;
+                
+                use Xepozz\InternalFunctionMock\MockerConfig;
+                
+                function time(...\$arguments)
                 {
-                    function time(...\$arguments)
-                    {
-                        if (\$arguments === [] || \$arguments === []) {
-                            return 555;
-                        }
-                        return \\time(...\$arguments);
+                    if (MockerConfig::checkCondition(__NAMESPACE__, "time", \$arguments)) {
+                        return MockerConfig::getResult(__NAMESPACE__, "time", \$arguments);
                     }
+                    return \\time(...\$arguments);
                 }
                 PHP,
             ],
@@ -64,19 +76,32 @@ final class MockerTest extends TestCase
                         ],
                     ],
                 ],
-                <<<"PHP"
+                <<<PHP
+                namespace Xepozz\InternalFunctionMock;
+                MockerConfig::addCondition(
+                    "Xepozz\InternalFunctionMock\Tests\Integration", 
+                    "str_contains",
+                    ['haystack' => 'string','needle' => 'str'],
+                    false
+                );
+                MockerConfig::addCondition(
+                    "Xepozz\InternalFunctionMock\Tests\Integration", 
+                    "str_contains",
+                    ['haystack' => 'string2','needle' => 'str'],
+                    false
+                );
+
+
                 namespace Xepozz\InternalFunctionMock\Tests\Integration;
+                
+                use Xepozz\InternalFunctionMock\MockerConfig;
+
+                function str_contains(...\$arguments)
                 {
-                    function str_contains(...\$arguments)
-                    {
-                        if (\$arguments === ['haystack' => 'string','needle' => 'str'] || \$arguments === ['string','str']) {
-                            return false;
-                        }
-                        if (\$arguments === ['haystack' => 'string2','needle' => 'str'] || \$arguments === ['string2','str']) {
-                            return false;
-                        }
-                        return \str_contains(...\$arguments);
+                    if (MockerConfig::checkCondition(__NAMESPACE__, "str_contains", \$arguments)) {
+                        return MockerConfig::getResult(__NAMESPACE__, "str_contains", \$arguments);
                     }
+                    return \str_contains(...\$arguments);
                 }
                 PHP,
             ],
