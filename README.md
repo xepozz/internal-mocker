@@ -5,6 +5,138 @@ functions as: `time()`, `str_contains()` and etc.
 
 ## Usage
 
+The main idea is simple: register Listener of PHPUnit and call Mocker at first.
+
+### Register hook
+
+1. Create new file `tests/MockerExtension.php`
+2. Paste the following code into the created file:
+    ```php
+    <?php
+    declare(strict_types=1);
+    
+    namespace App\Tests;
+    
+    use PHPUnit\Runner\BeforeFirstTestHook;
+    use Xepozz\InternalFunctionMocker\Mocker;
+    
+    final class MockerExtension implements BeforeFirstTestHook
+    {
+        public function executeBeforeFirstTest(): void
+        {
+            $mocks = [...];
+    
+            $mocker = new Mocker();
+            $mocker->load($mocks);
+        }
+    }
+    ```
+3. Register the hook as extension in `phpunit.xml.dist`
+    ```xml
+    <extensions>
+        <extension class="App\Tests\MockerExtension"/>
+    </extensions>
+    ```
+
+Here you have registered extension that will be called every time when you run `./vendor/bin/phpunit`.
+
+### Register mocks
+
+The package supports a few ways to mock functions:
+
+1. Runtime function's mock
+2. Pre-defined function's mock
+3. Mix of two previous ways
+
+#### Runtime function's mock
+
+If you want to make your test case to be used with mocked function you should register it before.
+
+Back to the created `MockerExtension::executeBeforeFirstTest` and edit the `$mocks` var.
+
+```php
+$mocks = [
+    [
+        'namespace' => 'App\Service',
+        'name' => 'time',
+    ],
+];
+```
+
+This mock will proxy every call of `time()` under the namespace `App\Service` through a generated wrapper.
+
+When you want to mock result in tests you should write the following code into needed test case:
+
+```php
+MockerState::addCondition(
+   'App\Service',
+   'time',
+   [],
+   100
+);
+```
+
+So your test case will look like the following:
+
+```php
+<?php
+namespace App\Tests;
+
+use App\Service;
+use PHPUnit\Framework\TestCase;
+
+class ServiceTest extends TestCase
+{
+    public function testRun2(): void
+    {
+        $service = new Service();
+
+        MockerState::addCondition(
+            'App\Service',
+            'time',
+            [],
+            100
+        );
+
+        $this->assertEquals(100, $service->doSomething());
+   }
+}
+```
+
+See full example
+in [`\Xepozz\InternalFunctionMocker\Tests\Integration\DateTimeTest::testRun2`](tests/Integration/DateTimeTest.php)
+
+#### Pre-defined function's mock
+
+Pre-defined mocks allow you to mock behaviour globally.
+
+It means that you don't need to write `MockerState::addCondition(...)` into each test case if you want to mock it for
+whole project.
+
+> Keep in the mind that the same function in different namespaces is not the same for `Mocker`.
+
+So back to the created `MockerExtension::executeBeforeFirstTest` and edit the `$mocks` var.
+
+```php
+$mocks = [
+    [
+        'namespace' => 'App\Service',
+        'name' => 'time',
+        'result' => 150,
+        'arguments' => [],
+    ],
+];
+```
+
+After this variant each `App\Service\time()` will return `150`.
+
+You can add a lot of mocks. `Mocker` compares the `arguments` values with arguments of calling function and returns
+needed result.
+
+#### Mix of two previous ways
+
+Mix means that you can use **_Pre-defined function's mock_** at first and **_Runtime function's mock_** after.
+
 ## Restrictions
 
 You should use function without using root namespace aliasing.
