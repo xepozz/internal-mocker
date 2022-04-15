@@ -3,6 +3,10 @@
 The package helps mock internal php functions as simple as it can. You can use this package when you need mock such
 functions as: `time()`, `str_contains()` and etc.
 
+## Installation
+
+`composer require xepozz/internal-mocker --dev`
+
 ## Usage
 
 The main idea is simple: register Listener of PHPUnit and call Mocker at first.
