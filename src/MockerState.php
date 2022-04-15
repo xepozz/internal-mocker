@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Xepozz\InternalFunctionMocker;
+namespace Xepozz\InternalMocker;
 
 final class MockerState
 {

@@ -19,8 +19,8 @@ The main idea is simple: register Listener of PHPUnit and call Mocker at first.
     
     use PHPUnit\Runner\BeforeTestHook;
     use PHPUnit\Runner\BeforeFirstTestHook;
-    use Xepozz\InternalFunctionMocker\Mocker;
-    use Xepozz\InternalFunctionMocker\MockerState;
+    use Xepozz\InternalMocker\Mocker;
+    use Xepozz\InternalMocker\MockerState;
     
     final class MockerExtension implements BeforeTestHook, BeforeFirstTestHook
     {
@@ -112,7 +112,7 @@ class ServiceTest extends TestCase
 ```
 
 See full example
-in [`\Xepozz\InternalFunctionMocker\Tests\Integration\DateTimeTest::testRun2`](tests/Integration/DateTimeTest.php)
+in [`\Xepozz\InternalMocker\Tests\Integration\DateTimeTest::testRun2`](tests/Integration/DateTimeTest.php)
 
 #### Pre-defined mock
 

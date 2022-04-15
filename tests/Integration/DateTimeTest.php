@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Xepozz\InternalFunctionMocker\Tests\Integration;
+namespace Xepozz\InternalMocker\Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
-use Xepozz\InternalFunctionMocker\MockerState;
+use Xepozz\InternalMocker\MockerState;
 
 final class DateTimeTest extends TestCase
 {
@@ -20,7 +20,7 @@ final class DateTimeTest extends TestCase
         $obj = new DateTime();
 
         MockerState::addCondition(
-            'Xepozz\InternalFunctionMocker\Tests\Integration',
+            'Xepozz\InternalMocker\Tests\Integration',
             'time',
             [],
             100

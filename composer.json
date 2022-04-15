@@ -1,14 +1,14 @@
 {
-    "name": "xepozz/internal-function-mock",
+    "name": "xepozz/internal-mocker",
     "type": "library",
     "autoload": {
         "psr-4": {
-            "Xepozz\\InternalFunctionMocker\\": "src/"
+            "Xepozz\\InternalMocker\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Xepozz\\InternalFunctionMocker\\Tests\\": "tests/"
+            "Xepozz\\InternalMocker\\Tests\\": "tests/"
         }
     },
     "authors": [

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Xepozz\InternalFunctionMocker;
+namespace Xepozz\InternalMocker;
 
 use Yiisoft\VarDumper\VarDumper;
 

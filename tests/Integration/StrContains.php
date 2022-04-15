@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Xepozz\InternalFunctionMocker\Tests\Integration;
+namespace Xepozz\InternalMocker\Tests\Integration;
 
 class StrContains
 {
