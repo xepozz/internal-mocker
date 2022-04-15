@@ -41,7 +41,7 @@ final class MockerState
 
     private static function replaceResult(string $namespace, string $functionName, array $arguments, $result): void
     {
-        $mocks = self::$state[$namespace][$functionName] ?? [];
+        $mocks = &self::$state[$namespace][$functionName];
 
         foreach ($mocks as &$mock) {
             if ($mock['arguments'] === $arguments) {
