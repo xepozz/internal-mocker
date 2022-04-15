@@ -5,7 +5,7 @@ namespace Xepozz\InternalFunctionMock\Tests\Integration;
 
 class DateTime
 {
-    public function run()
+    public function run(): int
     {
         return time();
     }

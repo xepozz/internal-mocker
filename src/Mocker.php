@@ -89,11 +89,10 @@ if (\$arguments === {$namedArguments} || \$arguments === {$flatArguments}) {
     return {$result};
 }
 PHP;
-        $condition = $this->padString($string, 4);
-        return $condition;
+        return $this->padString($string, 4);
     }
 
-    private function padString(string $string, int $spaces)
+    private function padString(string $string, int $spaces): string
     {
         $result = [];
         $rows = explode("\n", $string);
