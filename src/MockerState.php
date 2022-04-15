@@ -5,6 +5,7 @@ namespace Xepozz\InternalFunctionMocker;
 
 final class MockerState
 {
+    private static array $savedState = [];
     private static array $state = [];
 
     public static function addCondition(string $namespace, string $functionName, array $arguments, $result)
@@ -62,5 +63,13 @@ final class MockerState
         return false;
     }
 
+    public static function saveState()
+    {
+        self::$savedState = self::$state;
+    }
 
+    public static function resetState()
+    {
+        self::$state = self::$savedState;
+    }
 }
