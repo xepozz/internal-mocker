@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Xepozz\InternalFunctionMocker\Tests;
 
-use PHPUnit\Runner\AfterTestHook;
 use PHPUnit\Runner\BeforeFirstTestHook;
+use PHPUnit\Runner\BeforeTestHook;
 use Xepozz\InternalFunctionMocker\Mocker;
 use Xepozz\InternalFunctionMocker\MockerState;
 
-final class Listener implements BeforeFirstTestHook, AfterTestHook
+final class Listener implements BeforeFirstTestHook, BeforeTestHook
 {
     public function executeBeforeFirstTest(): void
     {
@@ -48,7 +48,7 @@ final class Listener implements BeforeFirstTestHook, AfterTestHook
         MockerState::saveState();
     }
 
-    public function executeAfterTest(string $test, float $time): void
+    public function executeBeforeTest(string $test): void
     {
         MockerState::resetState();
     }
