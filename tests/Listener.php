@@ -10,9 +10,6 @@ final class Listener implements BeforeFirstTestHook
 {
     public function executeBeforeFirstTest(): void
     {
-//        require __DIR__ . '/../data/mocks.php';
-//        return;
-
         $mocks = [
             [
                 'namespace' => 'Xepozz\InternalFunctionMocker\Tests\Integration',
