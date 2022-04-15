@@ -5,7 +5,9 @@ functions as: `time()`, `str_contains()` and etc.
 
 ## Installation
 
-`composer require xepozz/internal-mocker --dev`
+```bash
+composer require xepozz/internal-mocker --dev
+```
 
 ## Usage
 
