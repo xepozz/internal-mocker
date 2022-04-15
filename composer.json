@@ -3,12 +3,12 @@
     "type": "library",
     "autoload": {
         "psr-4": {
-            "Xepozz\\InternalFunctionMock\\": "src/"
+            "Xepozz\\InternalFunctionMocker\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Xepozz\\InternalFunctionMock\\Tests\\": "tests/"
+            "Xepozz\\InternalFunctionMocker\\Tests\\": "tests/"
         }
     },
     "authors": [

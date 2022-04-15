@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Xepozz\InternalFunctionMock;
+namespace Xepozz\InternalFunctionMocker;
 
 use Yiisoft\VarDumper\VarDumper;
 
@@ -27,10 +27,13 @@ class Mocker
     public function generate(array $mocks)
     {
         $mocks = $this->normalizeMocks($mocks);
-        $mockerConfig = ["namespace Xepozz\InternalFunctionMock;"];
+        $mockerConfig = ['namespace ' . __NAMESPACE__ . ';'];
         foreach ($mocks as $namespace => $functions) {
             foreach ($functions as $functionName => $imocks) {
                 foreach ($imocks as $imock) {
+                    if ($imock['skip']) {
+                        continue;
+                    }
                     $argumentsString = VarDumper::create($imock['arguments'])->export(false);
                     $resultString = VarDumper::create($imock['result'])->export(false);
                     $mockerConfig[] = <<<PHP
@@ -49,10 +52,12 @@ PHP;
         foreach ($mocks as $namespace => $functions) {
             $innerOutputsString = $this->generateFunction($functions);
 
+            $mockerConfigClassName = MockerConfig::class;
+
             $outputs[] = <<<PHP
 namespace {$namespace};
 
-use Xepozz\InternalFunctionMock\MockerConfig;
+use $mockerConfigClassName;
 
 $innerOutputsString
 PHP;
@@ -69,8 +74,9 @@ PHP;
             $result[$mock['namespace']][$mock['name']][] = [
                 'namespace' => $mock['namespace'],
                 'name' => $mock['name'],
-                'result' => $mock['result'],
-                'arguments' => $mock['arguments'],
+                'result' => $mock['result'] ?? null,
+                'arguments' => $mock['arguments'] ?? [],
+                'skip' => !array_key_exists('result', $mock),
             ];
         }
         return $result;
@@ -79,7 +85,7 @@ PHP;
     private function generateFunction(mixed $grouppedMocks): string
     {
         $innerOutputs = [];
-        foreach ($grouppedMocks as $functionName => $mocks) {
+        foreach ($grouppedMocks as $functionName => $_) {
             $string = <<<PHP
             function {$functionName}(...\$arguments)
             {

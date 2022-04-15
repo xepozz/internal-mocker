@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Xepozz\InternalFunctionMock\Tests;
+namespace Xepozz\InternalFunctionMocker\Tests;
 
 use PHPUnit\Runner\BeforeFirstTestHook;
-use Xepozz\InternalFunctionMock\Mocker;
+use Xepozz\InternalFunctionMocker\Mocker;
 
 final class Listener implements BeforeFirstTestHook
 {
@@ -15,13 +15,13 @@ final class Listener implements BeforeFirstTestHook
 
         $mocks = [
             [
-                'namespace' => 'Xepozz\InternalFunctionMock\Tests\Integration',
+                'namespace' => 'Xepozz\InternalFunctionMocker\Tests\Integration',
                 'name' => 'time',
                 'result' => 555,
                 'arguments' => [],
             ],
             [
-                'namespace' => 'Xepozz\InternalFunctionMock\Tests\Integration',
+                'namespace' => 'Xepozz\InternalFunctionMocker\Tests\Integration',
                 'name' => 'str_contains',
                 'result' => false,
                 'arguments' => [
@@ -30,13 +30,17 @@ final class Listener implements BeforeFirstTestHook
                 ],
             ],
             [
-                'namespace' => 'Xepozz\InternalFunctionMock\Tests\Integration',
+                'namespace' => 'Xepozz\InternalFunctionMocker\Tests\Integration',
                 'name' => 'str_contains',
                 'result' => false,
                 'arguments' => [
                     'haystack' => 'string2',
                     'needle' => 'str',
                 ],
+            ],
+            [
+                'namespace' => 'ASD',
+                'name' => 'only_runtime',
             ],
         ];
 

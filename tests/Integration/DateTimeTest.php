@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Xepozz\InternalFunctionMock\Tests\Integration;
+namespace Xepozz\InternalFunctionMocker\Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
 

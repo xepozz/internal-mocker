@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Xepozz\InternalFunctionMock;
+namespace Xepozz\InternalFunctionMocker;
 
 class MockerConfig
 {

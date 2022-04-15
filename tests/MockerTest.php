@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Xepozz\InternalFunctionMock\Tests;
+namespace Xepozz\InternalFunctionMocker\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Xepozz\InternalFunctionMock\Mocker;
-use Xepozz\InternalFunctionMock\MockerConfig;
+use Xepozz\InternalFunctionMocker\Mocker;
+use Xepozz\InternalFunctionMocker\MockerConfig;
 
 final class MockerTest extends TestCase
 {
@@ -26,25 +26,25 @@ final class MockerTest extends TestCase
             [
                 [
                     [
-                        'namespace' => 'Xepozz\InternalFunctionMock\Tests\Integration',
+                        'namespace' => 'Xepozz\InternalFunctionMocker\Tests\Integration',
                         'name' => 'time',
                         'result' => 555,
                         'arguments' => [],
                     ],
                 ],
                 <<<PHP
-                namespace Xepozz\InternalFunctionMock;
+                namespace Xepozz\InternalFunctionMocker;
                 MockerConfig::addCondition(
-                    "Xepozz\InternalFunctionMock\Tests\Integration", 
+                    "Xepozz\InternalFunctionMocker\Tests\Integration", 
                     "time",
                     [],
                     555
                 );
                 
                 
-                namespace Xepozz\InternalFunctionMock\Tests\Integration;
+                namespace Xepozz\InternalFunctionMocker\Tests\Integration;
                 
-                use Xepozz\InternalFunctionMock\MockerConfig;
+                use Xepozz\InternalFunctionMocker\MockerConfig;
                 
                 function time(...\$arguments)
                 {
@@ -58,7 +58,7 @@ final class MockerTest extends TestCase
             [
                 [
                     [
-                        'namespace' => 'Xepozz\InternalFunctionMock\Tests\Integration',
+                        'namespace' => 'Xepozz\InternalFunctionMocker\Tests\Integration',
                         'name' => 'str_contains',
                         'result' => false,
                         'arguments' => [
@@ -67,7 +67,7 @@ final class MockerTest extends TestCase
                         ],
                     ],
                     [
-                        'namespace' => 'Xepozz\InternalFunctionMock\Tests\Integration',
+                        'namespace' => 'Xepozz\InternalFunctionMocker\Tests\Integration',
                         'name' => 'str_contains',
                         'result' => false,
                         'arguments' => [
@@ -77,24 +77,24 @@ final class MockerTest extends TestCase
                     ],
                 ],
                 <<<PHP
-                namespace Xepozz\InternalFunctionMock;
+                namespace Xepozz\InternalFunctionMocker;
                 MockerConfig::addCondition(
-                    "Xepozz\InternalFunctionMock\Tests\Integration", 
+                    "Xepozz\InternalFunctionMocker\Tests\Integration", 
                     "str_contains",
                     ['haystack' => 'string','needle' => 'str'],
                     false
                 );
                 MockerConfig::addCondition(
-                    "Xepozz\InternalFunctionMock\Tests\Integration", 
+                    "Xepozz\InternalFunctionMocker\Tests\Integration", 
                     "str_contains",
                     ['haystack' => 'string2','needle' => 'str'],
                     false
                 );
 
 
-                namespace Xepozz\InternalFunctionMock\Tests\Integration;
+                namespace Xepozz\InternalFunctionMocker\Tests\Integration;
                 
-                use Xepozz\InternalFunctionMock\MockerConfig;
+                use Xepozz\InternalFunctionMocker\MockerConfig;
 
                 function str_contains(...\$arguments)
                 {

@@ -11,7 +11,7 @@
          resolveDependencies="true">
 
     <extensions>
-        <extension class="Xepozz\InternalFunctionMock\Tests\Listener"/>
+        <extension class="Xepozz\InternalFunctionMocker\Tests\Listener"/>
     </extensions>
     <php>
         <ini name="error_reporting" value="-1"/>
