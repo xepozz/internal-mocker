@@ -17,17 +17,25 @@ The main idea is simple: register Listener of PHPUnit and call Mocker at first.
     
     namespace App\Tests;
     
+    use PHPUnit\Runner\BeforeTestHook;
     use PHPUnit\Runner\BeforeFirstTestHook;
     use Xepozz\InternalFunctionMocker\Mocker;
+    use Xepozz\InternalFunctionMocker\MockerState;
     
-    final class MockerExtension implements BeforeFirstTestHook
+    final class MockerExtension implements BeforeTestHook, BeforeFirstTestHook
     {
         public function executeBeforeFirstTest(): void
         {
-            $mocks = [...];
+            $mocks = [];
     
             $mocker = new Mocker();
             $mocker->load($mocks);
+            MockerState::saveState();
+        }
+   
+        public function executeBeforeTest(string $test): void
+        {
+            MockerState::resetState();
         }
     }
     ```
@@ -44,11 +52,11 @@ Here you have registered extension that will be called every time when you run `
 
 The package supports a few ways to mock functions:
 
-1. Runtime function's mock
-2. Pre-defined function's mock
+1. Runtime mock
+2. Pre-defined mock
 3. Mix of two previous ways
 
-#### Runtime function's mock
+#### Runtime mock
 
 If you want to make your test case to be used with mocked function you should register it before.
 
@@ -106,7 +114,7 @@ class ServiceTest extends TestCase
 See full example
 in [`\Xepozz\InternalFunctionMocker\Tests\Integration\DateTimeTest::testRun2`](tests/Integration/DateTimeTest.php)
 
-#### Pre-defined function's mock
+#### Pre-defined mock
 
 Pre-defined mocks allow you to mock behaviour globally.
 
@@ -135,7 +143,18 @@ needed result.
 
 #### Mix of two previous ways
 
-Mix means that you can use **_Pre-defined function's mock_** at first and **_Runtime function's mock_** after.
+Mix means that you can use **_Pre-defined mock_** at first and **_Runtime mock_** after.
+
+### State
+
+If you use `Runtime mock` you may face the problem that after mocking function you still have it mocked in another test
+cases.
+
+`MockerState::saveState()` and `MockerState::resetState()` solves this problem.
+
+These methods save "current" state and unload each `Runtime mock` mock that was applied.
+
+Using `MockerState::saveState()` after `Mocker->load($mocks)` saves only **_Pre-defined_** mocks.
 
 ## Restrictions
 
