@@ -217,3 +217,53 @@ class SomeService
     }
 }
 ```
+
+##### Data Providers
+
+Sometimes you may face unpleasant situation when mocked function is not mocking without forced using `namespace`
++ `function`.
+It may mean that you are trying make PHP interpreter file in `@dataProvider`.
+Be careful of it and as a workaround I may suggest you to call the mocker in test's constructor.
+So first move all code from your extension method `executeBeforeFirstTest` to new static method
+and call it in both `executeBeforeFirstTest` and `__construct` methods.
+
+```php
+final class MyTest extends \PHPUnit\Framework\TestCase
+{
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
+    {
+        \App\Tests\MockerExtension::load();
+        parent::__construct($name, $data, $dataName);
+    }
+    
+    /// ...
+}
+```
+
+```php
+final class MockerExtension implements BeforeTestHook, BeforeFirstTestHook
+{
+    public function executeBeforeFirstTest(): void
+    {
+        self::load();
+    }
+
+    public static function load(): void
+    {
+        $mocks = [];
+
+        $mocker = new Mocker();
+        $mocker->load($mocks);
+        MockerState::saveState();
+    }
+
+    public function executeBeforeTest(string $test): void
+    {
+        MockerState::resetState();
+    }
+}
+```
+
+That all because of PHPUnit 9.5 and lower event management system.
+Data Provider functionality starts to work before any events so it's impossible to mock the function at the beginning of
+the runtime.  
