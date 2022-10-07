@@ -14,8 +14,7 @@ final class MockerTest extends TestCase
      */
     public function testGenerate(array $mocks, string $expected)
     {
-//        $this->markTestSkipped();
-        $mocker = new Mocker(__DIR__ . '/data/mocks.php');
+        $mocker = new Mocker();
 
         $this->assertEquals($expected, $mocker->generate($mocks));
     }
@@ -38,7 +37,8 @@ final class MockerTest extends TestCase
                     "Xepozz\InternalMocker\Tests\Integration", 
                     "time",
                     [],
-                    555
+                    555,
+                    false,
                 );
                 
                 
@@ -51,7 +51,7 @@ final class MockerTest extends TestCase
                     if (MockerState::checkCondition(__NAMESPACE__, "time", \$arguments)) {
                         return MockerState::getResult(__NAMESPACE__, "time", \$arguments);
                     }
-                    return \\time(...\$arguments);
+                    return MockerState::getDefaultResult(__NAMESPACE__, "time", fn() => \\time(...\$arguments));
                 }
                 PHP,
             ],
@@ -82,13 +82,15 @@ final class MockerTest extends TestCase
                     "Xepozz\InternalMocker\Tests\Integration", 
                     "str_contains",
                     ['haystack' => 'string','needle' => 'str'],
-                    false
+                    false,
+                    false,
                 );
                 MockerState::addCondition(
                     "Xepozz\InternalMocker\Tests\Integration", 
                     "str_contains",
                     ['haystack' => 'string2','needle' => 'str'],
-                    false
+                    false,
+                    false,
                 );
 
 
@@ -101,7 +103,7 @@ final class MockerTest extends TestCase
                     if (MockerState::checkCondition(__NAMESPACE__, "str_contains", \$arguments)) {
                         return MockerState::getResult(__NAMESPACE__, "str_contains", \$arguments);
                     }
-                    return \str_contains(...\$arguments);
+                    return MockerState::getDefaultResult(__NAMESPACE__, "str_contains", fn() => \\str_contains(...\$arguments));
                 }
                 PHP,
             ],

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Xepozz\InternalMocker;
@@ -7,9 +8,20 @@ final class MockerState
 {
     private static array $savedState = [];
     private static array $state = [];
+    private static array $defaults = [];
 
-    public static function addCondition(string $namespace, string $functionName, array $arguments, $result)
-    {
+    public static function addCondition(
+        string $namespace,
+        string $functionName,
+        array $arguments,
+        mixed $result,
+        bool $default = false
+    ): void {
+        if ($default) {
+            self::$defaults[$namespace][$functionName] = $result;
+            return;
+        }
+
         if (self::checkCondition($namespace, $functionName, $arguments)) {
             self::replaceResult($namespace, $functionName, $arguments, $result);
             return;
@@ -23,25 +35,33 @@ final class MockerState
         ];
     }
 
-    public static function checkCondition(string $namespace, string $functionName, array $expectedArguments): bool
-    {
+    public static function checkCondition(
+        string $namespace,
+        string $functionName,
+        array $expectedArguments,
+    ): bool {
         $mocks = self::$state[$namespace][$functionName] ?? [];
 
         foreach ($mocks as $mock) {
-            if (self::compareArguments($mock['arguments'], $expectedArguments)) {
+            if (self::compareArguments($mock, $expectedArguments)) {
                 return true;
             }
         }
         return false;
     }
 
-    private static function compareArguments($arguments, array $expectedArguments): bool
+    private static function compareArguments(array $arguments, array $expectedArguments): bool
     {
-        return $arguments === $expectedArguments || array_values($arguments) === $expectedArguments;
+        return $arguments['arguments'] === $expectedArguments
+            || array_values($arguments['arguments']) === $expectedArguments;
     }
 
-    private static function replaceResult(string $namespace, string $functionName, array $arguments, $result): void
-    {
+    private static function replaceResult(
+        string $namespace,
+        string $functionName,
+        array $arguments,
+        mixed $result,
+    ): void {
         $mocks = &self::$state[$namespace][$functionName];
 
         foreach ($mocks as &$mock) {
@@ -51,24 +71,39 @@ final class MockerState
         }
     }
 
-    public static function getResult(string $namespace, string $functionName, array $expectedArguments)
-    {
+    public static function getResult(
+        string $namespace,
+        string $functionName,
+        array $expectedArguments,
+    ): mixed {
         $mocks = self::$state[$namespace][$functionName] ?? [];
 
         foreach ($mocks as $mock) {
-            if (self::compareArguments($mock['arguments'], $expectedArguments)) {
+            if (self::compareArguments($mock, $expectedArguments)) {
                 return $mock['result'];
             }
         }
         return false;
     }
 
-    public static function saveState()
+    public static function getDefaultResult(
+        string $namespace,
+        string $functionName,
+        callable $fallback,
+    ): mixed {
+        if (isset(self::$defaults[$namespace][$functionName])) {
+            return self::$defaults[$namespace][$functionName];
+        }
+
+        return $fallback();
+    }
+
+    public static function saveState(): void
     {
         self::$savedState = self::$state;
     }
 
-    public static function resetState()
+    public static function resetState(): void
     {
         self::$state = self::$savedState;
     }

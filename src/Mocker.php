@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Xepozz\InternalMocker;
@@ -7,21 +8,23 @@ use Yiisoft\VarDumper\VarDumper;
 
 final class Mocker
 {
-    private string $path;
-
-    public function __construct(string $path = __DIR__ . '/../data/mocks.php')
+    public function __construct(private string $path = __DIR__ . '/../data/mocks.php')
     {
-        $this->path = $path;
     }
 
     public function load(array $mocks): void
     {
         $data = "<?php\n\n";
         $data .= $this->generate($mocks);
+        $configPath = $this->getConfigPath();
+        $directoryPath = dirname($configPath);
 
-        file_put_contents($this->getConfigPath(), $data);
+        if (!is_dir($directoryPath)) {
+            mkdir($directoryPath, 0775, true);
+        }
+        file_put_contents($configPath, $data);
 
-        require $this->getConfigPath();
+        require $configPath;
     }
 
     public function generate(array $mocks): string
@@ -36,15 +39,16 @@ final class Mocker
                     }
                     $argumentsString = VarDumper::create($imock['arguments'])->export(false);
                     $resultString = VarDumper::create($imock['result'])->export(false);
+                    $defaultString = $imock['default'] ? 'true' : 'false';
                     $mockerConfig[] = <<<PHP
 MockerState::addCondition(
     "$namespace", 
     "$functionName",
-    {$argumentsString},
-    {$resultString}
+    $argumentsString,
+    $resultString,
+    $defaultString,
 );
 PHP;
-
                 }
             }
         }
@@ -77,22 +81,23 @@ PHP;
                 'result' => $mock['result'] ?? null,
                 'arguments' => $mock['arguments'] ?? [],
                 'skip' => !array_key_exists('result', $mock),
+                'default' => $mock['default'] ?? false,
             ];
         }
         return $result;
     }
 
-    private function generateFunction(mixed $grouppedMocks): string
+    private function generateFunction(mixed $groupedMocks): string
     {
         $innerOutputs = [];
-        foreach ($grouppedMocks as $functionName => $_) {
+        foreach ($groupedMocks as $functionName => $_) {
             $string = <<<PHP
-            function {$functionName}(...\$arguments)
+            function $functionName(...\$arguments)
             {
                 if (MockerState::checkCondition(__NAMESPACE__, "$functionName", \$arguments)) {
                     return MockerState::getResult(__NAMESPACE__, "$functionName", \$arguments);
                 }
-                return \\{$functionName}(...\$arguments);
+                return MockerState::getDefaultResult(__NAMESPACE__, "$functionName", fn() => \\$functionName(...\$arguments));
             }
             PHP;
             $innerOutputs[] = $string;

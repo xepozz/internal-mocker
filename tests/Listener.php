@@ -14,28 +14,38 @@ final class Listener implements BeforeFirstTestHook, BeforeTestHook
     {
         $mocks = [
             [
-                'namespace' => 'Xepozz\InternalMocker\Tests\Integration',
-                'name' => 'time',
-                'result' => 555,
-                'arguments' => [],
+                'namespace' => 'Xepozz\\InternalMocker',
+                'name' => 'function_exists',
             ],
             [
                 'namespace' => 'Xepozz\InternalMocker\Tests\Integration',
+                'name' => 'class_exists',
+                'default' => true,
+                'result' => true,
+            ],
+            [
+                'namespace' => 'Xepozz\\InternalMocker\\Tests\\Integration',
+                'name' => 'time',
+                'arguments' => [],
+                'result' => 555,
+            ],
+            [
+                'namespace' => 'Xepozz\\InternalMocker\\Tests\\Integration',
                 'name' => 'str_contains',
-                'result' => false,
                 'arguments' => [
                     'haystack' => 'string',
                     'needle' => 'str',
                 ],
+                'result' => false,
             ],
             [
-                'namespace' => 'Xepozz\InternalMocker\Tests\Integration',
+                'namespace' => 'Xepozz\\InternalMocker\\Tests\\Integration',
                 'name' => 'str_contains',
-                'result' => false,
                 'arguments' => [
                     'haystack' => 'string2',
                     'needle' => 'str',
                 ],
+                'result' => false,
             ],
             [
                 'namespace' => 'ASD',
