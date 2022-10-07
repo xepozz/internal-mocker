@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Xepozz\InternalMocker\Tests\Integration;
@@ -6,35 +7,35 @@ namespace Xepozz\InternalMocker\Tests\Integration;
 use PHPUnit\Framework\TestCase;
 use Xepozz\InternalMocker\MockerState;
 
-class StrContainsTest extends TestCase
+final class StrContainsTest extends TestCase
 {
-    public function testRun()
+    public function testRun(): void
     {
         $obj = new StrContains();
 
         $this->assertFalse($obj->run('string', 'str'));
     }
 
-    public function testRun2()
+    public function testRun2(): void
     {
         $obj = new StrContains();
 
         $this->assertFalse($obj->run('string2', 'str'));
     }
 
-    public function testRun3()
+    public function testRun3(): void
     {
         $obj = new StrContains();
 
         $this->assertTrue($obj->run('string3', 'str'));
     }
 
-    public function testRun4()
+    public function testRun4(): void
     {
         $obj = new StrContains();
 
         MockerState::addCondition(
-            'Xepozz\InternalMocker\Tests\Integration',
+            __NAMESPACE__,
             'str_contains',
             ['string4', 'str'],
             false

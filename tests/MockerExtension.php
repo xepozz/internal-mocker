@@ -8,13 +8,23 @@ use PHPUnit\Runner\BeforeTestHook;
 use Xepozz\InternalMocker\Mocker;
 use Xepozz\InternalMocker\MockerState;
 
-final class Listener implements BeforeFirstTestHook, BeforeTestHook
+final class MockerExtension implements BeforeFirstTestHook, BeforeTestHook
 {
     public function executeBeforeFirstTest(): void
     {
+        self::load();
+    }
+
+    public function executeBeforeTest(string $test): void
+    {
+        MockerState::resetState();
+    }
+
+    public static function load(): void
+    {
         $mocks = [
             [
-                'namespace' => 'Xepozz\\InternalMocker',
+                'namespace' => 'Xepozz\InternalMocker\Tests\Integration',
                 'name' => 'function_exists',
             ],
             [
@@ -40,6 +50,14 @@ final class Listener implements BeforeFirstTestHook, BeforeTestHook
             ],
             [
                 'namespace' => 'Xepozz\\InternalMocker\\Tests\\Integration',
+                'name' => 'serialize',
+            ],
+            [
+                'namespace' => 'Xepozz\\InternalMocker\\Tests\\Integration',
+                'name' => 'unserialize',
+            ],
+            [
+                'namespace' => 'Xepozz\\InternalMocker\\Tests\\Integration',
                 'name' => 'str_contains',
                 'arguments' => [
                     'haystack' => 'string2',
@@ -56,10 +74,5 @@ final class Listener implements BeforeFirstTestHook, BeforeTestHook
         $mocker = new Mocker();
         $mocker->load($mocks);
         MockerState::saveState();
-    }
-
-    public function executeBeforeTest(string $test): void
-    {
-        MockerState::resetState();
     }
 }

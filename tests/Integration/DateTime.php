@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Xepozz\InternalMocker\Tests\Integration;
 
-class DateTime
+final class DateTime
 {
     public function run(): int
     {

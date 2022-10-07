@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Xepozz\InternalMocker;
+namespace Xepozz\InternalMocker\Tests\Integration;
 
 use RuntimeException;
 
-class Stub
+final class Stub
 {
     public function __construct()
     {

@@ -7,7 +7,7 @@ namespace Xepozz\InternalMocker\Tests\Integration;
 use PHPUnit\Framework\TestCase;
 use Xepozz\InternalMocker\MockerState;
 
-class IgnoreArgumentsTest extends TestCase
+final class IgnoreArgumentsTest extends TestCase
 {
     /**
      * @dataProvider dataProvider

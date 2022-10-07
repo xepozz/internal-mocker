@@ -20,7 +20,7 @@ final class DateTimeTest extends TestCase
         $obj = new DateTime();
 
         MockerState::addCondition(
-            'Xepozz\InternalMocker\Tests\Integration',
+            __NAMESPACE__,
             'time',
             [],
             100

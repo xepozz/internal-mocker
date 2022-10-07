@@ -24,7 +24,7 @@ final class Mocker
         }
         file_put_contents($configPath, $data);
 
-        require $configPath;
+        require_once $configPath;
     }
 
     public function generate(array $mocks): string
