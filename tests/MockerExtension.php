@@ -69,6 +69,11 @@ final class MockerExtension implements BeforeFirstTestHook, BeforeTestHook
                 'namespace' => 'ASD',
                 'name' => 'only_runtime',
             ],
+            [
+                'namespace' => '',
+                'name' => 'time',
+                'function' => fn () => `date +%s`,
+            ],
         ];
 
         $mocker = new Mocker();

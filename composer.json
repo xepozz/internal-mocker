@@ -1,6 +1,18 @@
 {
     "name": "xepozz/internal-mocker",
     "type": "library",
+    "authors": [
+        {
+            "name": "Dmitrii Derepko",
+            "email": "xepozz@list.ru"
+        }
+    ],
+    "require": {
+        "yiisoft/var-dumper": "^1.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
     "autoload": {
         "psr-4": {
             "Xepozz\\InternalMocker\\": "src/"
@@ -10,17 +22,5 @@
         "psr-4": {
             "Xepozz\\InternalMocker\\Tests\\": "tests/"
         }
-    },
-    "authors": [
-        {
-            "name": "Dmitrii Derepko",
-            "email": "xepozz@list.ru"
-        }
-    ],
-    "require-dev": {
-        "phpunit/phpunit": "^9.5"
-    },
-    "require": {
-        "yiisoft/var-dumper": "^1.2"
     }
 }
