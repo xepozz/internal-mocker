@@ -3,6 +3,10 @@
 The package helps mock internal php functions as simple as possible. Use this package when you need mock such
 functions as: `time()`, `str_contains()`, `rand`, etc.
 
+[![Latest Stable Version](https://poser.pugx.org/xepozz/internal-mocker/v/stable.svg)](https://packagist.org/packages/xepozz/internal-mocker)
+[![Total Downloads](https://poser.pugx.org/xepozz/internal-mocker/downloads.svg)](https://packagist.org/packages/xepozz/internal-mocker)
+[![phpunit](https://github.com/xepozz/internal-mocker/workflows/PHPUnit/badge.svg)](https://github.com/xepozz/internal-mocker/actions)
+
 ## Installation
 
 ```bash
