@@ -5,7 +5,6 @@ namespace Xepozz\InternalMocker\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Xepozz\InternalMocker\Mocker;
-use Xepozz\InternalMocker\MockerState;
 
 final class MockerTest extends TestCase
 {
@@ -32,7 +31,9 @@ final class MockerTest extends TestCase
                     ],
                 ],
                 <<<PHP
-                namespace Xepozz\InternalMocker;
+                namespace {
+                use Xepozz\InternalMocker\MockerState;
+                
                 MockerState::addCondition(
                     "Xepozz\InternalMocker\Tests\Integration", 
                     "time",
@@ -40,10 +41,10 @@ final class MockerTest extends TestCase
                     555,
                     false,
                 );
+                }
                 
                 
-                namespace Xepozz\InternalMocker\Tests\Integration;
-                
+                namespace Xepozz\InternalMocker\Tests\Integration {
                 use Xepozz\InternalMocker\MockerState;
                 
                 function time(...\$arguments)
@@ -52,6 +53,7 @@ final class MockerTest extends TestCase
                         return MockerState::getResult(__NAMESPACE__, "time", \$arguments);
                     }
                     return MockerState::getDefaultResult(__NAMESPACE__, "time", fn() => \\time(...\$arguments));
+                }
                 }
                 PHP,
             ],
@@ -77,7 +79,9 @@ final class MockerTest extends TestCase
                     ],
                 ],
                 <<<PHP
-                namespace Xepozz\InternalMocker;
+                namespace {
+                use Xepozz\InternalMocker\MockerState;
+                
                 MockerState::addCondition(
                     "Xepozz\InternalMocker\Tests\Integration", 
                     "str_contains",
@@ -92,10 +96,10 @@ final class MockerTest extends TestCase
                     false,
                     false,
                 );
+                }
 
 
-                namespace Xepozz\InternalMocker\Tests\Integration;
-                
+                namespace Xepozz\InternalMocker\Tests\Integration {
                 use Xepozz\InternalMocker\MockerState;
 
                 function str_contains(...\$arguments)
@@ -104,6 +108,7 @@ final class MockerTest extends TestCase
                         return MockerState::getResult(__NAMESPACE__, "str_contains", \$arguments);
                     }
                     return MockerState::getDefaultResult(__NAMESPACE__, "str_contains", fn() => \\str_contains(...\$arguments));
+                }
                 }
                 PHP,
             ],

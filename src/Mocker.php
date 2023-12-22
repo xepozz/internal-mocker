@@ -30,7 +30,7 @@ final class Mocker
     public function generate(array $mocks): string
     {
         $mocks = $this->normalizeMocks($mocks);
-        $mockerConfig = ['namespace ' . __NAMESPACE__ . ';'];
+        $mockerConfig = [];
         foreach ($mocks as $namespace => $functions) {
             foreach ($functions as $functionName => $imocks) {
                 foreach ($imocks as $imock) {
@@ -41,39 +41,52 @@ final class Mocker
                     $resultString = VarDumper::create($imock['result'])->export(false);
                     $defaultString = $imock['default'] ? 'true' : 'false';
                     $mockerConfig[] = <<<PHP
-MockerState::addCondition(
-    "$namespace", 
-    "$functionName",
-    $argumentsString,
-    $resultString,
-    $defaultString,
-);
-PHP;
+                    MockerState::addCondition(
+                        "$namespace", 
+                        "$functionName",
+                        $argumentsString,
+                        $resultString,
+                        $defaultString,
+                    );
+                    PHP;
                 }
             }
         }
         $outputs = [];
+        $mockerConfigClassName = MockerState::class;
         foreach ($mocks as $namespace => $functions) {
             $innerOutputsString = $this->generateFunction($functions);
 
-            $mockerConfigClassName = MockerState::class;
-
             $outputs[] = <<<PHP
-namespace {$namespace};
-
-use $mockerConfigClassName;
-
-$innerOutputsString
-PHP;
+            namespace {$namespace} {
+            use {$mockerConfigClassName};
+            
+            $innerOutputsString
+            }
+            PHP;
         }
 
 
-        return implode("\n", $mockerConfig) . "\n\n\n" . implode("\n", $outputs);
+        $pre = '';
+        if ($mockerConfig !== []) {
+            $runtimeMocks = implode("\n", $mockerConfig);
+            $pre = <<<PHP
+            namespace {
+            use {$mockerConfigClassName};
+            
+            {$runtimeMocks}
+            }
+            PHP;
+        }
+
+
+        return $pre . "\n\n\n" . implode("\n", $outputs);
     }
 
     private function normalizeMocks(array $mocks): array
     {
         $result = [];
+        usort($mocks, fn ($a, $b) => strlen($a['namespace']) <=> strlen($b['namespace']));
         foreach ($mocks as $mock) {
             $result[$mock['namespace']][$mock['name']][] = [
                 'namespace' => $mock['namespace'],
@@ -82,6 +95,7 @@ PHP;
                 'arguments' => $mock['arguments'] ?? [],
                 'skip' => !array_key_exists('result', $mock),
                 'default' => $mock['default'] ?? false,
+                'function' => $mock['function'] ?? false,
             ];
         }
         return $result;
@@ -91,13 +105,20 @@ PHP;
     {
         $innerOutputs = [];
         foreach ($groupedMocks as $functionName => $_) {
+            $function = "fn() => \\$functionName(...\$arguments)";
+            if ($_[0]['function'] !== false) {
+                $function = is_string($_[0]['function']) ? $_[0]['function'] : VarDumper::create(
+                    $_[0]['function']
+                )->export(false);
+            }
+
             $string = <<<PHP
             function $functionName(...\$arguments)
             {
                 if (MockerState::checkCondition(__NAMESPACE__, "$functionName", \$arguments)) {
                     return MockerState::getResult(__NAMESPACE__, "$functionName", \$arguments);
                 }
-                return MockerState::getDefaultResult(__NAMESPACE__, "$functionName", fn() => \\$functionName(...\$arguments));
+                return MockerState::getDefaultResult(__NAMESPACE__, "$functionName", $function);
             }
             PHP;
             $innerOutputs[] = $string;
