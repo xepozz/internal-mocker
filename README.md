@@ -1,7 +1,7 @@
 # Introduction
 
-The package helps mock internal php functions as simple as it can. You can use this package when you need mock such
-functions as: `time()`, `str_contains()` and etc.
+The package helps mock internal php functions as simple as possible. Use this package when you need mock such
+functions as: `time()`, `str_contains()`, `rand`, etc.
 
 ## Installation
 
@@ -11,9 +11,9 @@ composer require xepozz/internal-mocker --dev
 
 ## Usage
 
-The main idea is simple: register Listener of PHPUnit and call Mocker at first.
+The main idea is pretty simple: register a Listener for PHPUnit and call the Mocker extension first.
 
-### Register hook
+### Register a hook
 
 1. Create new file `tests/MockerExtension.php`
 2. Paste the following code into the created file:
@@ -58,15 +58,15 @@ Here you have registered extension that will be called every time when you run `
 
 The package supports a few ways to mock functions:
 
-1. Runtime mock
-2. Pre-defined mock
+1. Runtime mocks
+2. Pre-defined mocks
 3. Mix of two previous ways
 
-#### Runtime mock
+#### Runtime mocks
 
 If you want to make your test case to be used with mocked function you should register it before.
 
-Back to the created `MockerExtension::executeBeforeFirstTest` and edit the `$mocks` var.
+Back to the created `MockerExtension::executeBeforeFirstTest` and edit the `$mocks` variable.
 
 ```php
 $mocks = [
@@ -83,10 +83,10 @@ When you want to mock result in tests you should write the following code into n
 
 ```php
 MockerState::addCondition(
-   'App\Service',
-   'time',
-   [],
-   100
+   'App\Service', // namespace
+   'time', // function name
+   [], // arguments
+   100 // result
 );
 ```
 
@@ -127,9 +127,9 @@ Pre-defined mocks allow you to mock behaviour globally.
 It means that you don't need to write `MockerState::addCondition(...)` into each test case if you want to mock it for
 whole project.
 
-> Keep in the mind that the same function in different namespaces is not the same for `Mocker`.
+> Keep in mind that the same functions from different namespaces are not the same for `Mocker`.
 
-So back to the created `MockerExtension::executeBeforeFirstTest` and edit the `$mocks` var.
+So back to the created `MockerExtension::executeBeforeFirstTest` and edit the `$mocks` variable.
 
 ```php
 $mocks = [
@@ -162,63 +162,49 @@ These methods save "current" state and unload each `Runtime mock` mock that was 
 
 Using `MockerState::saveState()` after `Mocker->load($mocks)` saves only **_Pre-defined_** mocks.
 
+## Global namespaced functions
+
+### Internal functions
+
+Without any additional configuration you can mock only functions that are defined under any not global
+namespaces: `App\`, `App\Service\`, etc.
+But you cannot mock functions that are defined under global namespace or defined in a `use` statement, e.g. `use time;`
+or `\time();`.
+
+#### Workaround
+
+The way you can mock global functions is to disable them
+in `php.ini`: https://www.php.net/manual/en/ini.core.php#ini.disable-functions
+
+The best way is to disable them only for tests by running a command with the additional flags:
+
+```bash
+php -ddisable_functions=${functions} ./vendor/bin/phpunit
+```
+
+> Replace `${functions}` with the list of functions that you want to mock, separated by commas, e.g.: `time,rand`.
+
+So now you can mock global functions as well.
+
+#### Internal function implementation
+
+When you disable a function in `php.ini` you cannot call it anymore. That means you must implement it by yourself.
+
+Obviously, almost all functions are implemented in PHP looks the same as the Bash ones.
+
+The shortest way to implement a function is to use ``` `bash command` ``` syntax:
+
+```php
+$mocks[] = [
+   'namespace' => '',
+   'name' => 'time',
+   'function' => fn () => `date +%s`,
+];
+```
+
 ## Restrictions
 
-You should use function without using root namespace aliasing.
-
-#### Good example
-
-```php
-namespace App\Service
-
-class SomeService
-{
-    public function doSomething()
-    {
-        // ...
-        time()
-        // ...
-    }
-}
-```
-
-#### Bad examples
-
-Make sure that function doesn't have leading backslash.
-
-```php
-namespace App\Service
-
-class SomeService
-{
-    public function doSomething()
-    {
-        // ...
-        \time()
-        // ...
-    }
-}
-```
-
-Make sure that function isn't included into `use` section.
-
-```php
-namespace App\Service
-
-use function time;
-
-class SomeService
-{
-    public function doSomething()
-    {
-        // ...
-        time()
-        // ...
-    }
-}
-```
-
-##### Data Providers
+### Data Providers
 
 Sometimes you may face unpleasant situation when mocked function is not mocking without forced using `namespace`
 + `function`.
@@ -265,5 +251,6 @@ final class MockerExtension implements BeforeTestHook, BeforeFirstTestHook
 ```
 
 That all because of PHPUnit 9.5 and lower event management system.
-Data Provider functionality starts to work before any events so it's impossible to mock the function at the beginning of
+Data Provider functionality starts to work before any events, so it's impossible to mock the function at the beginning
+of
 the runtime.  
