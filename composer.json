@@ -24,6 +24,6 @@
         }
     },
     "scripts": {
-        "test": "php -ddisable_functions=time vendor/bin/phpunit"
+        "test": "php -ddisable_functions=time,header,headers_sent vendor/bin/phpunit"
     }
 }

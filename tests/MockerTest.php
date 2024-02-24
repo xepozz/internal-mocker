@@ -47,13 +47,13 @@ final class MockerTest extends TestCase
                 namespace Xepozz\InternalMocker\Tests\Integration {
                     use Xepozz\InternalMocker\MockerState;
 
-                    function time(...\$arguments)
+                    function time()
                     {
-                        \$position = MockerState::saveTrace(__NAMESPACE__, "time", \$arguments);
-                        if (MockerState::checkCondition(__NAMESPACE__, "time", \$arguments)) {
-                            \$result = MockerState::getResult(__NAMESPACE__, "time", \$arguments);
+                        \$position = MockerState::saveTrace(__NAMESPACE__, "time", );
+                        if (MockerState::checkCondition(__NAMESPACE__, "time", [])) {
+                            \$result = MockerState::getResult(__NAMESPACE__, "time", );
                         } else {
-                            \$result = MockerState::getDefaultResult(__NAMESPACE__, "time", fn() => \\time(...\$arguments));
+                            \$result = MockerState::getDefaultResult(__NAMESPACE__, "time", fn() => \\time(), );
                         }
                         
                         return MockerState::saveTraceResult(__NAMESPACE__, "time", \$position, \$result);
@@ -108,11 +108,11 @@ final class MockerTest extends TestCase
 
                     function str_contains(...\$arguments)
                     {
-                        \$position = MockerState::saveTrace(__NAMESPACE__, "str_contains", \$arguments);
+                        \$position = MockerState::saveTrace(__NAMESPACE__, "str_contains", ...\$arguments);
                         if (MockerState::checkCondition(__NAMESPACE__, "str_contains", \$arguments)) {
-                            \$result = MockerState::getResult(__NAMESPACE__, "str_contains", \$arguments);
+                            \$result = MockerState::getResult(__NAMESPACE__, "str_contains", ...\$arguments);
                         } else {
-                            \$result = MockerState::getDefaultResult(__NAMESPACE__, "str_contains", fn() => \\str_contains(...\$arguments));
+                            \$result = MockerState::getDefaultResult(__NAMESPACE__, "str_contains", fn(...\$arguments) => \\str_contains(...\$arguments), ...\$arguments);
                         }
                         
                         return MockerState::saveTraceResult(__NAMESPACE__, "str_contains", \$position, \$result);

@@ -32,7 +32,7 @@ jobs:
         run: composer install
 
       - name: Run tests with code coverage.
-        run: php -ddisable_functions=time vendor/bin/phpunit --coverage-clover=coverage.xml --colors=always
+        run: composer test
 
       - name: Upload coverage to Codecov.
         if: matrix.os == 'ubuntu-latest'

@@ -14,7 +14,7 @@ final class MockerState
     public static function addCondition(
         string $namespace,
         string $functionName,
-        array $arguments,
+        array|string $arguments,
         mixed $result,
         bool $default = false
     ): void {
@@ -39,7 +39,7 @@ final class MockerState
     public static function checkCondition(
         string $namespace,
         string $functionName,
-        array $expectedArguments,
+        array|string $expectedArguments,
     ): bool {
         $mocks = self::$state[$namespace][$functionName] ?? [];
 
@@ -51,10 +51,10 @@ final class MockerState
         return false;
     }
 
-    private static function compareArguments(array $arguments, array $expectedArguments): bool
+    private static function compareArguments(array $arguments, array|string $expectedArguments): bool
     {
         return $arguments['arguments'] === $expectedArguments
-            || array_values($arguments['arguments']) === $expectedArguments;
+            || (is_array($arguments['arguments']) && array_values($arguments['arguments']) === $expectedArguments);
     }
 
     private static function replaceResult(
@@ -75,13 +75,13 @@ final class MockerState
     public static function getResult(
         string $namespace,
         string $functionName,
-        array $expectedArguments,
+        &...$expectedArguments,
     ): mixed {
         $mocks = self::$state[$namespace][$functionName] ?? [];
 
         foreach ($mocks as $mock) {
             if (self::compareArguments($mock, $expectedArguments)) {
-                return $mock['result'];
+                return is_callable($mock['result']) ? $mock['result'](...$expectedArguments) : $mock['result'];
             }
         }
         return false;
@@ -91,12 +91,13 @@ final class MockerState
         string $namespace,
         string $functionName,
         callable $fallback,
+        &...$arguments,
     ): mixed {
         if (isset(self::$defaults[$namespace][$functionName])) {
             return self::$defaults[$namespace][$functionName];
         }
 
-        return $fallback();
+        return $fallback(...$arguments);
     }
 
     public static function saveState(): void
@@ -113,11 +114,11 @@ final class MockerState
     public static function saveTrace(
         string $namespace,
         string $functionName,
-        array $arguments
+        &...$arguments
     ): int {
         $position = count(self::$traces[$namespace][$functionName] ?? []);
         self::$traces[$namespace][$functionName][$position] = [
-            'arguments' => $arguments,
+            'arguments' => &$arguments,
             'trace' => debug_backtrace(),
         ];
 
