@@ -67,12 +67,12 @@ final class TraceTest extends TestCase
 
         $this->assertEquals(['test'], $traces[0]['arguments']);
         $this->assertEquals('saveTrace', $traces[0]['trace'][0]['function']);
-        $this->assertEquals(132, $traces[0]['trace'][0]['line']);
+        $this->assertEquals(144, $traces[0]['trace'][0]['line']);
         $this->assertEquals(
             [
                 __NAMESPACE__,
                 'serialize',
-                ['test'],
+                'test',
             ],
             $traces[0]['trace'][0]['args'],
         );
