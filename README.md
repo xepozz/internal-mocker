@@ -112,6 +112,17 @@ MockerState::addCondition(
 );
 ```
 
+You may also use a callback to set the result of the function:
+
+```php
+MockerState::addCondition(
+   '', // namespace
+   'headers_sent', // function name
+   [null, null], // both arguments are references and they are not initialized yet on the function call
+   fn (&$file, &$line) => $file = $line = 123, // callback result
+);
+```
+
 So your test case will look like the following:
 
 ```php
