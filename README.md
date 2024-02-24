@@ -17,6 +17,7 @@ functions as: `time()`, `str_contains()`, `rand`, etc.
     - [Pre-defined mock](#pre-defined-mock)
     - [Mix of two previous ways](#mix-of-two-previous-ways)
   - [State](#state)
+  - [Tracking calls](#tracking-calls)
 - [Global namespaced functions](#global-namespaced-functions)
   - [Internal functions](#internal-functions)
     - [Workaround](#workaround)
@@ -182,6 +183,27 @@ cases.
 These methods save "current" state and unload each `Runtime mock` mock that was applied.
 
 Using `MockerState::saveState()` after `Mocker->load($mocks)` saves only **_Pre-defined_** mocks.
+
+### Tracking calls
+
+You may track calls of mocked functions by using `MockerState::getTraces()` method.
+
+```php
+$traces = MockerState::getTraces('App\Service', 'time');
+```
+
+`$traces` will contain an array of arrays with the following structure:
+
+```php
+[
+    [
+        'arguments' => [], // arguments of the function
+        'trace' => [], // the result of debug_backtrace function
+        'result' => 1708764835, // result of the function
+    ],
+    // ...
+]
+```
 
 ## Global namespaced functions
 
