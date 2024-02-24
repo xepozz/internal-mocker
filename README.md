@@ -7,6 +7,24 @@ functions as: `time()`, `str_contains()`, `rand`, etc.
 [![Total Downloads](https://poser.pugx.org/xepozz/internal-mocker/downloads.svg)](https://packagist.org/packages/xepozz/internal-mocker)
 [![phpunit](https://github.com/xepozz/internal-mocker/workflows/PHPUnit/badge.svg)](https://github.com/xepozz/internal-mocker/actions)
 
+# Table of contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Register a hook](#register-a-hook)
+  - [Register mocks](#register-mocks)
+    - [Runtime mocks](#runtime-mocks)
+    - [Pre-defined mock](#pre-defined-mock)
+    - [Mix of two previous ways](#mix-of-two-previous-ways)
+  - [State](#state)
+  - [Tracking calls](#tracking-calls)
+- [Global namespaced functions](#global-namespaced-functions)
+  - [Internal functions](#internal-functions)
+    - [Workaround](#workaround)
+    - [Internal function implementation](#internal-function-implementation)
+- [Restrictions](#restrictions)
+  - [Data Providers](#data-providers)
+
 ## Installation
 
 ```bash
@@ -166,6 +184,27 @@ These methods save "current" state and unload each `Runtime mock` mock that was 
 
 Using `MockerState::saveState()` after `Mocker->load($mocks)` saves only **_Pre-defined_** mocks.
 
+### Tracking calls
+
+You may track calls of mocked functions by using `MockerState::getTraces()` method.
+
+```php
+$traces = MockerState::getTraces('App\Service', 'time');
+```
+
+`$traces` will contain an array of arrays with the following structure:
+
+```php
+[
+    [
+        'arguments' => [], // arguments of the function
+        'trace' => [], // the result of debug_backtrace function
+        'result' => 1708764835, // result of the function
+    ],
+    // ...
+]
+```
+
 ## Global namespaced functions
 
 ### Internal functions
@@ -184,6 +223,19 @@ The best way is to disable them only for tests by running a command with the add
 
 ```bash
 php -ddisable_functions=${functions} ./vendor/bin/phpunit
+```
+
+> If you are using PHPStorm you may set the command in the `Run/Debug Configurations` section.
+> Add the flag `-ddisable_functions=${functions}` to the `Interpreter options` field.
+
+> You may keep the command in the `composer.json` file under the `scripts` section.
+
+```json
+{
+  "scripts": {
+    "test": "php -ddisable_functions=time,serialize,header,date ./vendor/bin/phpunit"
+  }
+}
 ```
 
 > Replace `${functions}` with the list of functions that you want to mock, separated by commas, e.g.: `time,rand`.

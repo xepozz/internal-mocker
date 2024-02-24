@@ -35,7 +35,7 @@ final class MockerTest extends TestCase
                 use Xepozz\InternalMocker\MockerState;
                 
                 MockerState::addCondition(
-                    "Xepozz\InternalMocker\Tests\Integration", 
+                    "Xepozz\InternalMocker\Tests\Integration",
                     "time",
                     [],
                     555,
@@ -49,10 +49,14 @@ final class MockerTest extends TestCase
                 
                 function time(...\$arguments)
                 {
+                    \$position = MockerState::saveTrace(__NAMESPACE__, "time", \$arguments);
                     if (MockerState::checkCondition(__NAMESPACE__, "time", \$arguments)) {
-                        return MockerState::getResult(__NAMESPACE__, "time", \$arguments);
+                        \$result = MockerState::getResult(__NAMESPACE__, "time", \$arguments);
+                    } else {
+                        \$result = MockerState::getDefaultResult(__NAMESPACE__, "time", fn() => \\time(...\$arguments));
                     }
-                    return MockerState::getDefaultResult(__NAMESPACE__, "time", fn() => \\time(...\$arguments));
+                    
+                    return MockerState::saveTraceResult(__NAMESPACE__, "time", \$position, \$result);
                 }
                 }
                 PHP,
@@ -83,14 +87,14 @@ final class MockerTest extends TestCase
                 use Xepozz\InternalMocker\MockerState;
                 
                 MockerState::addCondition(
-                    "Xepozz\InternalMocker\Tests\Integration", 
+                    "Xepozz\InternalMocker\Tests\Integration",
                     "str_contains",
                     ['haystack' => 'string','needle' => 'str'],
                     false,
                     false,
                 );
                 MockerState::addCondition(
-                    "Xepozz\InternalMocker\Tests\Integration", 
+                    "Xepozz\InternalMocker\Tests\Integration",
                     "str_contains",
                     ['haystack' => 'string2','needle' => 'str'],
                     false,
@@ -104,10 +108,14 @@ final class MockerTest extends TestCase
 
                 function str_contains(...\$arguments)
                 {
+                    \$position = MockerState::saveTrace(__NAMESPACE__, "str_contains", \$arguments);
                     if (MockerState::checkCondition(__NAMESPACE__, "str_contains", \$arguments)) {
-                        return MockerState::getResult(__NAMESPACE__, "str_contains", \$arguments);
+                        \$result = MockerState::getResult(__NAMESPACE__, "str_contains", \$arguments);
+                    } else {
+                        \$result = MockerState::getDefaultResult(__NAMESPACE__, "str_contains", fn() => \\str_contains(...\$arguments));
                     }
-                    return MockerState::getDefaultResult(__NAMESPACE__, "str_contains", fn() => \\str_contains(...\$arguments));
+                    
+                    return MockerState::saveTraceResult(__NAMESPACE__, "str_contains", \$position, \$result);
                 }
                 }
                 PHP,
