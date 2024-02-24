@@ -42,7 +42,7 @@ final class Mocker
                     $defaultString = $imock['default'] ? 'true' : 'false';
                     $mockerConfig[] = <<<PHP
                     MockerState::addCondition(
-                        "$namespace", 
+                        "$namespace",
                         "$functionName",
                         $argumentsString,
                         $resultString,
@@ -60,7 +60,7 @@ final class Mocker
             $outputs[] = <<<PHP
             namespace {$namespace} {
             use {$mockerConfigClassName};
-            
+
             $innerOutputsString
             }
             PHP;
@@ -73,7 +73,7 @@ final class Mocker
             $pre = <<<PHP
             namespace {
             use {$mockerConfigClassName};
-            
+
             {$runtimeMocks}
             }
             PHP;
@@ -115,10 +115,14 @@ final class Mocker
             $string = <<<PHP
             function $functionName(...\$arguments)
             {
+                \$position = MockerState::saveTrace(__NAMESPACE__, "$functionName", \$arguments);
                 if (MockerState::checkCondition(__NAMESPACE__, "$functionName", \$arguments)) {
-                    return MockerState::getResult(__NAMESPACE__, "$functionName", \$arguments);
+                    \$result = MockerState::getResult(__NAMESPACE__, "$functionName", \$arguments);
+                } else {
+                    \$result = MockerState::getDefaultResult(__NAMESPACE__, "$functionName", $function);
                 }
-                return MockerState::getDefaultResult(__NAMESPACE__, "$functionName", $function);
+                
+                return MockerState::saveTraceResult(__NAMESPACE__, "$functionName", \$position, \$result);
             }
             PHP;
             $innerOutputs[] = $string;

@@ -6,6 +6,7 @@ namespace Xepozz\InternalMocker;
 
 final class MockerState
 {
+    private static mixed $traces = [];
     private static array $savedState = [];
     private static array $state = [];
     private static array $defaults = [];
@@ -106,5 +107,38 @@ final class MockerState
     public static function resetState(): void
     {
         self::$state = self::$savedState;
+        self::$traces = [];
+    }
+
+    public static function saveTrace(
+        string $namespace,
+        string $functionName,
+        array $arguments
+    ): int {
+        $position = count(self::$traces[$namespace][$functionName] ?? []);
+        self::$traces[$namespace][$functionName][$position] = [
+            'arguments' => $arguments,
+            'trace' => debug_backtrace(),
+        ];
+
+        return $position;
+    }
+
+    public static function saveTraceResult(
+        string $namespace,
+        string $functionName,
+        int $position,
+        mixed $result
+    ): mixed {
+        self::$traces[$namespace][$functionName][$position]['result'] = $result;
+
+        return $result;
+    }
+
+    public static function getTraces(
+        string $namespace,
+        string $functionName
+    ): array {
+        return self::$traces[$namespace][$functionName] ?? [];
     }
 }

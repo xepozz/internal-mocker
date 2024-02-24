@@ -22,5 +22,8 @@
         "psr-4": {
             "Xepozz\\InternalMocker\\Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "test": "php -ddisable_functions=time vendor/bin/phpunit"
     }
 }
