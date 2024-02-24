@@ -53,7 +53,7 @@ final class MockerTest extends TestCase
                         if (MockerState::checkCondition(__NAMESPACE__, "time", \$arguments)) {
                             \$result = MockerState::getResult(__NAMESPACE__, "time", \$arguments);
                         } else {
-                            \$result = MockerState::getDefaultResult(__NAMESPACE__, "time", fn() => \\time(...\$arguments));
+                            \$result = MockerState::getDefaultResult(__NAMESPACE__, "time", \$arguments, fn() => \\time(...\$arguments));
                         }
                         
                         return MockerState::saveTraceResult(__NAMESPACE__, "time", \$position, \$result);
@@ -112,7 +112,7 @@ final class MockerTest extends TestCase
                         if (MockerState::checkCondition(__NAMESPACE__, "str_contains", \$arguments)) {
                             \$result = MockerState::getResult(__NAMESPACE__, "str_contains", \$arguments);
                         } else {
-                            \$result = MockerState::getDefaultResult(__NAMESPACE__, "str_contains", fn() => \\str_contains(...\$arguments));
+                            \$result = MockerState::getDefaultResult(__NAMESPACE__, "str_contains", \$arguments, fn() => \\str_contains(...\$arguments));
                         }
                         
                         return MockerState::saveTraceResult(__NAMESPACE__, "str_contains", \$position, \$result);

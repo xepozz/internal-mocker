@@ -90,13 +90,14 @@ final class MockerState
     public static function getDefaultResult(
         string $namespace,
         string $functionName,
+        array $arguments,
         callable $fallback,
     ): mixed {
         if (isset(self::$defaults[$namespace][$functionName])) {
             return self::$defaults[$namespace][$functionName];
         }
 
-        return $fallback();
+        return $fallback(...$arguments);
     }
 
     public static function saveState(): void

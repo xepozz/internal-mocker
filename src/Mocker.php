@@ -119,7 +119,7 @@ final class Mocker
                     if (MockerState::checkCondition(__NAMESPACE__, "$functionName", \$arguments)) {
                         \$result = MockerState::getResult(__NAMESPACE__, "$functionName", \$arguments);
                     } else {
-                        \$result = MockerState::getDefaultResult(__NAMESPACE__, "$functionName", $function);
+                        \$result = MockerState::getDefaultResult(__NAMESPACE__, "$functionName", \$arguments, $function);
                     }
                     
                     return MockerState::saveTraceResult(__NAMESPACE__, "$functionName", \$position, \$result);
