@@ -11278,12 +11278,12 @@ return [
         ],
     'header_remove' =>
         [
-            'signatureArguments' => '?string $name',
+            'signatureArguments' => '?string $name = null',
             'arguments' => '$name',
         ],
     'headers_sent' =>
         [
-            'signatureArguments' => '&$filename, &$line',
+            'signatureArguments' => 'string &$filename = null, int &$line = null',
             'arguments' => '$filename, $line',
         ],
     'headers_list' =>

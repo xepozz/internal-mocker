@@ -45,8 +45,11 @@ foreach ($phpFiles as $file) {
     }
 }
 
+$patches = require './patches.php';
+
+$result = array_merge($stubs, $patches);
 
 file_put_contents(
     $destination,
-    '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export($stubs, true) . ';'
+    '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export($result, true) . ';'
 );
