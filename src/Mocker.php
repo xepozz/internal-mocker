@@ -52,10 +52,12 @@ final class Mocker
                 }
             }
         }
+        $stubs = require __DIR__ . '/stubs.php';
+
         $outputs = [];
         $mockerConfigClassName = MockerState::class;
         foreach ($mocks as $namespace => $functions) {
-            $innerOutputsString = $this->generateFunction($functions);
+            $innerOutputsString = $this->generateFunction($functions, $stubs);
 
             $outputs[] = <<<PHP
             namespace {$namespace} {
@@ -101,9 +103,8 @@ final class Mocker
         return $result;
     }
 
-    private function generateFunction(mixed $groupedMocks): string
+    private function generateFunction(array $groupedMocks, array $stubs): string
     {
-        $stubs = require __DIR__ . '/stubs.php';
         $innerOutputs = [];
         foreach ($groupedMocks as $functionName => $_) {
             $signatureArguments = $stubs[$functionName]['signatureArguments'] ?? '...$arguments';

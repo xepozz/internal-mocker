@@ -18,6 +18,6 @@ final class HeaderTest extends TestCase
             'header',
         );
 
-        $this->assertEquals(['Content-Type: application/json'], $trace[0]['arguments']);
+        $this->assertEquals(['Content-Type: application/json', true, 0], $trace[0]['arguments']);
     }
 }
