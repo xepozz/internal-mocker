@@ -8,8 +8,10 @@ use Yiisoft\VarDumper\VarDumper;
 
 final class Mocker
 {
-    public function __construct(private string $path = __DIR__ . '/../data/mocks.php')
-    {
+    public function __construct(
+        private string $path = __DIR__ . '/../data/mocks.php',
+        private string $stubPath = __DIR__ . '/stubs.php',
+    ) {
     }
 
     public function load(array $mocks): void
@@ -52,7 +54,8 @@ final class Mocker
                 }
             }
         }
-        $stubs = require __DIR__ . '/stubs.php';
+
+        $stubs = require $this->stubPath;
 
         $outputs = [];
         $mockerConfigClassName = MockerState::class;

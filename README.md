@@ -20,7 +20,6 @@ functions as: `time()`, `str_contains()`, `rand`, etc.
   - [Tracking calls](#tracking-calls)
 - [Global namespaced functions](#global-namespaced-functions)
   - [Internal functions](#internal-functions)
-    - [Workaround](#workaround)
     - [Internal function implementation](#internal-function-implementation)
 - [Restrictions](#restrictions)
   - [Data Providers](#data-providers)
@@ -75,6 +74,14 @@ The main idea is pretty simple: register a Listener for PHPUnit and call the Moc
     ```
 
 Here you have registered extension that will be called every time when you run `./vendor/bin/phpunit`.
+
+By default, all functions will be generated and saved into `/vendor/bin/xepozz/internal-mocker/data/mocks.php` file.
+
+Override the first argument of the `Mocker` constructor to change the path:
+
+```php
+$mocker = new Mocker('/path/to/your/mocks.php');
+```
 
 ### Register mocks
 
@@ -216,16 +223,22 @@ $traces = MockerState::getTraces('App\Service', 'time');
 ]
 ```
 
+### Function signature stubs
+
+All internal functions are stubbed to be compatible with the original ones.
+It makes the functions use referenced arguments (`&$file`) as the originals do.
+
+They are located in the [`src/stubs.php`](src/stubs.php) file.
+
+If you need to add a new function signature, override the second argument of the `Mocker` constructor:
+
+```php
+$mocker = new Mocker(stubPath: '/path/to/your/stubs.php');
+```
+
 ## Global namespaced functions
 
 ### Internal functions
-
-Without any additional configuration you can mock only functions that are defined under any not global
-namespaces: `App\`, `App\Service\`, etc.
-But you cannot mock functions that are defined under global namespace or defined in a `use` statement, e.g. `use time;`
-or `\time();`.
-
-#### Workaround
 
 The way you can mock global functions is to disable them
 in `php.ini`: https://www.php.net/manual/en/ini.core.php#ini.disable-functions
@@ -268,6 +281,9 @@ $mocks[] = [
    'function' => fn () => `date +%s`,
 ];
 ```
+
+> Keep in mind that leaving a global function without implementation will cause a recourse call of the function,
+> that will lead to a fatal error.
 
 ## Restrictions
 
