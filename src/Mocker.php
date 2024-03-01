@@ -8,8 +8,10 @@ use Yiisoft\VarDumper\VarDumper;
 
 final class Mocker
 {
-    public function __construct(private string $path = __DIR__ . '/../data/mocks.php')
-    {
+    public function __construct(
+        private string $path = __DIR__ . '/../data/mocks.php',
+        private string $stubPath = __DIR__ . '/stubs.php',
+    ) {
     }
 
     public function load(array $mocks): void
@@ -41,25 +43,28 @@ final class Mocker
                     $resultString = VarDumper::create($imock['result'])->export(false);
                     $defaultString = $imock['default'] ? 'true' : 'false';
                     $mockerConfig[] = <<<PHP
-                    MockerState::addCondition(
-                        "$namespace",
-                        "$functionName",
-                        $argumentsString,
-                        $resultString,
-                        $defaultString,
-                    );
+                        MockerState::addCondition(
+                            "$namespace",
+                            "$functionName",
+                            $argumentsString,
+                            $resultString,
+                            $defaultString,
+                        );
                     PHP;
                 }
             }
         }
+
+        $stubs = require $this->stubPath;
+
         $outputs = [];
         $mockerConfigClassName = MockerState::class;
         foreach ($mocks as $namespace => $functions) {
-            $innerOutputsString = $this->generateFunction($functions);
+            $innerOutputsString = $this->generateFunction($functions, $stubs);
 
             $outputs[] = <<<PHP
             namespace {$namespace} {
-            use {$mockerConfigClassName};
+                use {$mockerConfigClassName};
 
             $innerOutputsString
             }
@@ -72,7 +77,7 @@ final class Mocker
             $runtimeMocks = implode("\n", $mockerConfig);
             $pre = <<<PHP
             namespace {
-            use {$mockerConfigClassName};
+                use {$mockerConfigClassName};
 
             {$runtimeMocks}
             }
@@ -101,29 +106,38 @@ final class Mocker
         return $result;
     }
 
-    private function generateFunction(mixed $groupedMocks): string
+    private function generateFunction(array $groupedMocks, array $stubs): string
     {
         $innerOutputs = [];
         foreach ($groupedMocks as $functionName => $_) {
-            $function = "fn() => \\$functionName(...\$arguments)";
+            $signatureArguments = $stubs[$functionName]['signatureArguments'] ?? '...$arguments';
+            if (isset($stubs[$functionName]['arguments'])) {
+                $arrayArguments = sprintf('[%s]', $stubs[$functionName]['arguments']);
+                $unpackedArguments = $stubs[$functionName]['arguments'];
+            } else {
+                $arrayArguments = '$arguments';
+                $unpackedArguments = '...$arguments';
+            }
+
+            $function = "fn($signatureArguments) => \\$functionName($unpackedArguments)";
             if ($_[0]['function'] !== false) {
-                $function = is_string($_[0]['function']) ? $_[0]['function'] : VarDumper::create(
-                    $_[0]['function']
-                )->export(false);
+                $function = is_string($_[0]['function'])
+                    ? $_[0]['function']
+                    : VarDumper::create($_[0]['function'])->export(false);
             }
 
             $string = <<<PHP
-            function $functionName(...\$arguments)
-            {
-                \$position = MockerState::saveTrace(__NAMESPACE__, "$functionName", \$arguments);
-                if (MockerState::checkCondition(__NAMESPACE__, "$functionName", \$arguments)) {
-                    \$result = MockerState::getResult(__NAMESPACE__, "$functionName", \$arguments);
-                } else {
-                    \$result = MockerState::getDefaultResult(__NAMESPACE__, "$functionName", $function);
+                function $functionName($signatureArguments)
+                {
+                    \$position = MockerState::saveTrace(__NAMESPACE__, "$functionName", $unpackedArguments);
+                    if (MockerState::checkCondition(__NAMESPACE__, "$functionName", $arrayArguments)) {
+                        \$result = MockerState::getResult(__NAMESPACE__, "$functionName", $unpackedArguments);
+                    } else {
+                        \$result = MockerState::getDefaultResult(__NAMESPACE__, "$functionName", $function, $unpackedArguments);
+                    }
+                    
+                    return MockerState::saveTraceResult(__NAMESPACE__, "$functionName", \$position, \$result);
                 }
-                
-                return MockerState::saveTraceResult(__NAMESPACE__, "$functionName", \$position, \$result);
-            }
             PHP;
             $innerOutputs[] = $string;
         }
