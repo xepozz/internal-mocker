@@ -11283,7 +11283,7 @@ return [
         ],
     'headers_sent' =>
         [
-            'signatureArguments' => 'string &$filename = null, int &$line = null',
+            'signatureArguments' => '&$filename = null, &$line = null',
             'arguments' => '$filename, $line',
         ],
     'headers_list' =>
