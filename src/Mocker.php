@@ -8,8 +8,10 @@ use Yiisoft\VarDumper\VarDumper;
 
 final class Mocker
 {
-    public function __construct(private string $path = __DIR__ . '/../data/mocks.php')
-    {
+    public function __construct(
+        private string $path = __DIR__ . '/../data/mocks.php',
+        private string $stubPath = __DIR__ . '/stubs.php',
+    ) {
     }
 
     public function load(array $mocks): void
@@ -52,10 +54,13 @@ final class Mocker
                 }
             }
         }
+
+        $stubs = require $this->stubPath;
+
         $outputs = [];
         $mockerConfigClassName = MockerState::class;
         foreach ($mocks as $namespace => $functions) {
-            $innerOutputsString = $this->generateFunction($functions);
+            $innerOutputsString = $this->generateFunction($functions, $stubs);
 
             $outputs[] = <<<PHP
             namespace {$namespace} {
@@ -101,9 +106,8 @@ final class Mocker
         return $result;
     }
 
-    private function generateFunction(mixed $groupedMocks): string
+    private function generateFunction(array $groupedMocks, array $stubs): string
     {
-        $stubs = require __DIR__ . '/stubs.php';
         $innerOutputs = [];
         foreach ($groupedMocks as $functionName => $_) {
             $signatureArguments = $stubs[$functionName]['signatureArguments'] ?? '...$arguments';

@@ -106,13 +106,13 @@ final class MockerTest extends TestCase
                 namespace Xepozz\InternalMocker\Tests\Integration {
                     use Xepozz\InternalMocker\MockerState;
 
-                    function str_contains(...\$arguments)
+                    function str_contains(string \$haystack, string \$needle)
                     {
-                        \$position = MockerState::saveTrace(__NAMESPACE__, "str_contains", ...\$arguments);
-                        if (MockerState::checkCondition(__NAMESPACE__, "str_contains", \$arguments)) {
-                            \$result = MockerState::getResult(__NAMESPACE__, "str_contains", ...\$arguments);
+                        \$position = MockerState::saveTrace(__NAMESPACE__, "str_contains", \$haystack, \$needle);
+                        if (MockerState::checkCondition(__NAMESPACE__, "str_contains", [\$haystack, \$needle])) {
+                            \$result = MockerState::getResult(__NAMESPACE__, "str_contains", \$haystack, \$needle);
                         } else {
-                            \$result = MockerState::getDefaultResult(__NAMESPACE__, "str_contains", fn(...\$arguments) => \\str_contains(...\$arguments), ...\$arguments);
+                            \$result = MockerState::getDefaultResult(__NAMESPACE__, "str_contains", fn(string \$haystack, string \$needle) => \\str_contains(\$haystack, \$needle), \$haystack, \$needle);
                         }
                         
                         return MockerState::saveTraceResult(__NAMESPACE__, "str_contains", \$position, \$result);
