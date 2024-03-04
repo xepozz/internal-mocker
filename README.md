@@ -11,7 +11,9 @@ functions as: `time()`, `str_contains()`, `rand`, etc.
 
 - [Installation](#installation)
 - [Usage](#usage)
-  - [Register a hook](#register-a-hook)
+  - [Register a PHPUnit Extension](#register-a-phpunit-extension)
+    - [PHPUnit 9](#phpunit-9)
+    - [PHPUnit 10 and higher](#phpunit-10-and-higher)
   - [Register mocks](#register-mocks)
     - [Runtime mocks](#runtime-mocks)
     - [Pre-defined mock](#pre-defined-mock)
@@ -34,7 +36,9 @@ composer require xepozz/internal-mocker --dev
 
 The main idea is pretty simple: register a Listener for PHPUnit and call the Mocker extension first.
 
-### Register a hook
+### Register a PHPUnit Extension
+
+#### PHPUnit 9
 
 1. Create new file `tests/MockerExtension.php`
 2. Paste the following code into the created file:
@@ -70,6 +74,64 @@ The main idea is pretty simple: register a Listener for PHPUnit and call the Moc
     ```xml
     <extensions>
         <extension class="App\Tests\MockerExtension"/>
+    </extensions>
+    ```
+
+#### PHPUnit 10 and higher
+
+1. Create new file `tests/MockerExtension.php`
+2. Paste the following code into the created file:
+    ```php
+    <?php
+    declare(strict_types=1);
+    
+    namespace App\Tests;
+    
+    use PHPUnit\Event\Test\PreparationStarted;
+    use PHPUnit\Event\Test\PreparationStartedSubscriber;
+    use PHPUnit\Event\TestSuite\Started;
+    use PHPUnit\Event\TestSuite\StartedSubscriber;
+    use PHPUnit\Runner\Extension\Extension;
+    use PHPUnit\Runner\Extension\Facade;
+    use PHPUnit\Runner\Extension\ParameterCollection;
+    use PHPUnit\TextUI\Configuration\Configuration;
+    use Xepozz\InternalMocker\Mocker;
+    use Xepozz\InternalMocker\MockerState;
+    
+    final class MockerExtension implements Extension
+    {
+        public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
+        {
+            $facade->registerSubscribers(
+                new class () implements StartedSubscriber {
+                    public function notify(Started $event): void
+                    {
+                        MockerExtension::load();
+                    }
+                },
+                new class implements PreparationStartedSubscriber {
+                    public function notify(PreparationStarted $event): void
+                    {
+                        MockerState::resetState();
+                    }
+                },
+            );
+        }
+    
+        public static function load(): void
+        {
+            $mocks = [];
+    
+            $mocker = new Mocker();
+            $mocker->load($mocks);
+            MockerState::saveState();
+        }
+    }
+    ```
+3. Register the hook as extension in `phpunit.xml.dist`
+    ```xml
+    <extensions>
+        <bootstrap class="App\Tests\MockerExtension"/>
     </extensions>
     ```
 
