@@ -46,7 +46,12 @@ jobs:
         run: composer req --dev phpunit/phpunit:^${{ matrix.phpunit }} -W
 
       - name: Run tests with code coverage.
-        run: composer test -- -c phpunit${{ matrix.phpunit }}.xml
+        if: matrix.phpunit == '9'
+        run: composer test -- -c phpunit9.xml
+
+      - name: Run tests with code coverage.
+        if: matrix.phpunit != '9'
+        run: composer test -- -c phpunit.xml
 
       - name: Upload coverage to Codecov.
         if: matrix.os == 'ubuntu-latest'
