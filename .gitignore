@@ -4,3 +4,4 @@
 /tests/data/
 
 .phpunit.result.cache
+composer.lock

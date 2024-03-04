@@ -2,13 +2,13 @@
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          colors="true"
-         verbose="true"
          failOnSkipped="false"
          failOnRisky="false"
          failOnWarning="false"
          stopOnFailure="false"
          executionOrder="default"
-         resolveDependencies="true">
+         resolveDependencies="true"
+>
 
     <extensions>
         <extension class="Xepozz\InternalMocker\Tests\MockerExtension"/>

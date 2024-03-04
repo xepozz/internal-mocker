@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Xepozz\InternalMocker\Tests\Integration;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Xepozz\InternalMocker\MockerState;
 use Xepozz\InternalMocker\Tests\MockerExtension;
@@ -19,6 +20,7 @@ final class EarlyMockInitializationSucceedTest extends TestCase
     /**
      * @dataProvider dataProvider
      */
+    #[DataProvider('dataProvider')]
     public function testRun(UseInSucceedDataProviderStub $object): void
     {
         MockerState::addCondition(
@@ -30,7 +32,7 @@ final class EarlyMockInitializationSucceedTest extends TestCase
         $this->assertEquals('not serialized', $object->run('asd'));
     }
 
-    public function dataProvider(): array
+    public static function dataProvider(): iterable
     {
         return [
             [new UseInSucceedDataProviderStub()],
