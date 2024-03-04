@@ -4,31 +4,33 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6fa41fdfbe286c72032dc0a1c0cebb85",
+    "content-hash": "38100aeb6f528b0d7e6f4f08eccf57c7",
     "packages": [
         {
             "name": "yiisoft/arrays",
-            "version": "2.1.0",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/arrays.git",
-                "reference": "7c889a4339f52ff96fc6f5c3eb13a66481f07422"
+                "reference": "effe8c9384a8fec25d378c3e1c3b252573def52b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/arrays/zipball/7c889a4339f52ff96fc6f5c3eb13a66481f07422",
-                "reference": "7c889a4339f52ff96fc6f5c3eb13a66481f07422",
+                "url": "https://api.github.com/repos/yiisoft/arrays/zipball/effe8c9384a8fec25d378c3e1c3b252573def52b",
+                "reference": "effe8c9384a8fec25d378c3e1c3b252573def52b",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.4|^8.0",
+                "php": "^8.0",
                 "yiisoft/strings": "^2.1"
             },
             "require-dev": {
+                "maglnet/composer-require-checker": "^4.4",
                 "phpunit/phpunit": "^9.5",
-                "roave/infection-static-analysis-plugin": "^1.16",
+                "rector/rector": "^0.15.4",
+                "roave/infection-static-analysis-plugin": "^1.25",
                 "spatie/phpunit-watcher": "^1.23",
-                "vimeo/psalm": "^4.18"
+                "vimeo/psalm": "^4.30|^5.4"
             },
             "type": "library",
             "autoload": {
@@ -65,31 +67,33 @@
                     "type": "opencollective"
                 }
             ],
-            "time": "2022-08-20T04:35:39+00:00"
+            "time": "2023-01-12T12:04:12+00:00"
         },
         {
             "name": "yiisoft/strings",
-            "version": "2.1.0",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/strings.git",
-                "reference": "714ebfbddf8a169194f0820adf0dd9f910363535"
+                "reference": "ff519d31e1c2518f42554fb5410e31bbb74b8108"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/strings/zipball/714ebfbddf8a169194f0820adf0dd9f910363535",
-                "reference": "714ebfbddf8a169194f0820adf0dd9f910363535",
+                "url": "https://api.github.com/repos/yiisoft/strings/zipball/ff519d31e1c2518f42554fb5410e31bbb74b8108",
+                "reference": "ff519d31e1c2518f42554fb5410e31bbb74b8108",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
-                "php": "^7.4|^8.0"
+                "php": "^8.0"
             },
             "require-dev": {
+                "maglnet/composer-require-checker": "^4.2",
                 "phpunit/phpunit": "^9.5",
+                "rector/rector": "^0.18.3",
                 "roave/infection-static-analysis-plugin": "^1.16",
                 "spatie/phpunit-watcher": "^1.23",
-                "vimeo/psalm": "^4.18"
+                "vimeo/psalm": "^4.30|^5.8"
             },
             "type": "library",
             "autoload": {
@@ -126,32 +130,39 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2022-08-20T04:26:16+00:00"
+            "time": "2023-12-22T07:29:39+00:00"
         },
         {
             "name": "yiisoft/var-dumper",
-            "version": "1.3.0",
+            "version": "1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/var-dumper.git",
-                "reference": "d3f48768278565b93dd6cf7d0db662738e41e213"
+                "reference": "c7f6a40d117b905abe26ac093593eaf7c57b9bd5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/var-dumper/zipball/d3f48768278565b93dd6cf7d0db662738e41e213",
-                "reference": "d3f48768278565b93dd6cf7d0db662738e41e213",
+                "url": "https://api.github.com/repos/yiisoft/var-dumper/zipball/c7f6a40d117b905abe26ac093593eaf7c57b9bd5",
+                "reference": "c7f6a40d117b905abe26ac093593eaf7c57b9bd5",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
+                "ext-mbstring": "*",
+                "ext-tokenizer": "*",
                 "php": "^8.0",
-                "yiisoft/arrays": "^1.0|^2.0"
+                "yiisoft/arrays": "^1.0|^2.0|^3.0"
             },
             "require-dev": {
+                "maglnet/composer-require-checker": "^4.2",
                 "phpunit/phpunit": "^9.5",
+                "rector/rector": "^0.18",
                 "roave/infection-static-analysis-plugin": "^1.16",
                 "spatie/phpunit-watcher": "^1.23",
-                "vimeo/psalm": "^4.18"
+                "vimeo/psalm": "^4.30|^5.3"
+            },
+            "suggest": {
+                "ext-sockets": "Send dumps to a server through UDP/TCP protocols"
             },
             "type": "library",
             "autoload": {
@@ -166,7 +177,7 @@
             "license": [
                 "BSD-3-Clause"
             ],
-            "description": "Yii VarDumper",
+            "description": "Enhances functionality of var_dump() and var_export(). It is dealing with recursive references, may highlight syntax and export closures.",
             "homepage": "https://www.yiiframework.com/",
             "keywords": [
                 "framework",
@@ -192,7 +203,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2022-09-22T11:27:25+00:00"
+            "time": "2023-10-08T11:21:24+00:00"
         }
     ],
     "packages-dev": [
