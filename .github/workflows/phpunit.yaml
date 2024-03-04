@@ -38,7 +38,7 @@ jobs:
         run: composer install
 
       - name: Switching PHPUnit version
-        run: composer composer req --dev phpunit/phpunit:^${{ matrix.phpunit }} -W
+        run: composer req --dev phpunit/phpunit:^${{ matrix.phpunit }} -W
 
       - name: Run tests with code coverage.
         run: composer test -- -c phpunit${{ matrix.phpunit }}.xml
