@@ -6,7 +6,7 @@ name: "PHPUnit"
 
 jobs:
   phpunit:
-    name: PHP ${{ matrix.php }}-${{ matrix.os }}
+    name: PHPUnit ${{ matrix.phpunit }} PHP ${{ matrix.php }}-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -38,7 +38,7 @@ jobs:
         run: composer install
 
       - name: Switching PHPUnit version
-        run: composer composer req --dev phpunit/phpunit:^${{ matrix.phpunit }}
+        run: composer composer req --dev phpunit/phpunit:^${{ matrix.phpunit }} -W
 
       - name: Run tests with code coverage.
         run: composer test -- -c phpunit${{ matrix.phpunit }}.xml
