@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Xepozz\InternalMocker\Tests\Integration;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Xepozz\InternalMocker\MockerState;
 
@@ -12,6 +13,7 @@ final class IgnoreArgumentsTest extends TestCase
     /**
      * @dataProvider dataProvider
      */
+    #[DataProvider('dataProvider')]
     public function testSuccessByCase(string $class): void
     {
         MockerState::addCondition(
@@ -27,6 +29,7 @@ final class IgnoreArgumentsTest extends TestCase
     /**
      * @dataProvider dataProvider
      */
+    #[DataProvider('dataProvider')]
     public function testSuccessByDefault(string $class): void
     {
         MockerState::addCondition(
