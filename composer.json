@@ -11,7 +11,7 @@
         "yiisoft/var-dumper": "^1.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^10"
     },
     "autoload": {
         "psr-4": {
@@ -24,6 +24,6 @@
         }
     },
     "scripts": {
-        "test": "php -ddisable_functions=time,header,headers_sent vendor/bin/phpunit"
+        "test": "php -ddisable_functions=time,header,headers_sent vendor/bin/phpunit --random-order-seed=1"
     }
 }
