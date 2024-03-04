@@ -1,23 +1,63 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Xepozz\InternalMocker\Tests;
 
+use PHPUnit\Event\Test\PreparationStarted;
+use PHPUnit\Event\Test\PreparationStartedSubscriber;
+use PHPUnit\Event\TestSuite\Started;
+use PHPUnit\Event\TestSuite\StartedSubscriber;
 use PHPUnit\Runner\BeforeFirstTestHook;
 use PHPUnit\Runner\BeforeTestHook;
+use PHPUnit\Runner\Extension\Extension;
+use PHPUnit\Runner\Extension\Facade;
+use PHPUnit\Runner\Extension\ParameterCollection;
+use PHPUnit\TextUI\Configuration\Configuration;
 use Xepozz\InternalMocker\Mocker;
 use Xepozz\InternalMocker\MockerState;
 
-final class MockerExtension implements BeforeFirstTestHook, BeforeTestHook
+if (interface_exists(Extension::class)) {
+    abstract class PHPUnitExtension implements Extension
+    {
+    }
+} else {
+    abstract class PHPUnitExtension implements BeforeFirstTestHook, BeforeTestHook
+    {
+    }
+}
+
+final class MockerExtension extends PHPUnitExtension
 {
+    // phpunit 9 compatibility
     public function executeBeforeFirstTest(): void
     {
         self::load();
     }
 
+    // phpunit 9 compatibility
     public function executeBeforeTest(string $test): void
     {
         MockerState::resetState();
+    }
+
+    // phpunit 10 compatibility
+    public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
+    {
+        $facade->registerSubscribers(
+            new class () implements StartedSubscriber {
+                public function notify(Started $event): void
+                {
+                    MockerExtension::load();
+                }
+            },
+            new class implements PreparationStartedSubscriber {
+                public function notify(PreparationStarted $event): void
+                {
+                    MockerState::resetState();
+                }
+            },
+        );
     }
 
     public static function load(): void
@@ -89,4 +129,5 @@ final class MockerExtension implements BeforeFirstTestHook, BeforeTestHook
         $mocker->load($mocks);
         MockerState::saveState();
     }
+
 }

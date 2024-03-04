@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Xepozz\InternalMocker\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Xepozz\InternalMocker\Mocker;
 
@@ -11,6 +12,7 @@ final class MockerTest extends TestCase
     /**
      * @dataProvider generateProvider
      */
+    #[DataProvider('generateProvider')]
     public function testGenerate(array $mocks, string $expected)
     {
         $mocker = new Mocker();
@@ -18,7 +20,7 @@ final class MockerTest extends TestCase
         $this->assertEquals($expected, $mocker->generate($mocks));
     }
 
-    public function generateProvider()
+    public static function generateProvider(): iterable
     {
         return [
             [
