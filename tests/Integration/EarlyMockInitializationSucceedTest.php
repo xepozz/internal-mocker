@@ -30,7 +30,7 @@ final class EarlyMockInitializationSucceedTest extends TestCase
         $this->assertEquals('not serialized', $object->run('asd'));
     }
 
-    public function dataProvider(): array
+    public static function dataProvider(): iterable
     {
         return [
             [new UseInSucceedDataProviderStub()],

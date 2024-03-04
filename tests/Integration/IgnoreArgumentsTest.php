@@ -40,7 +40,7 @@ final class IgnoreArgumentsTest extends TestCase
         $this->assertTrue(class_exists($class));
     }
 
-    public function dataProvider(): array
+    public static function dataProvider(): iterable
     {
         return [
             ['A'],

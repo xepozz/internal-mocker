@@ -18,7 +18,7 @@ final class MockerTest extends TestCase
         $this->assertEquals($expected, $mocker->generate($mocks));
     }
 
-    public function generateProvider()
+    public static function generateProvider(): iterable
     {
         return [
             [
