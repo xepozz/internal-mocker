@@ -1,0 +1,28 @@
+<meta-storm xmlns="meta-storm">
+    <definitions>
+        <classMethod class="\Xepozz\InternalMocker\MockerState" method="addCondition" argument="1">
+            <collection name="GLOBAL:php-functions"/>
+        </classMethod>
+        <classMethod class="\Xepozz\InternalMocker\MockerState" method="checkCondition" argument="1">
+            <collection name="GLOBAL:php-functions"/>
+        </classMethod>
+        <classMethod class="\Xepozz\InternalMocker\MockerState" method="getTraces" argument="1">
+            <collection name="GLOBAL:php-functions"/>
+        </classMethod>
+        <classMethod class="\Xepozz\InternalMocker\MockerState" method="saveTrace" argument="1">
+            <collection name="GLOBAL:php-functions"/>
+        </classMethod>
+        <classMethod class="\Xepozz\InternalMocker\MockerState" method="saveTraceResult" argument="1">
+            <collection name="GLOBAL:php-functions"/>
+        </classMethod>
+        <classMethod class="\Xepozz\InternalMocker\MockerState" method="getResult" argument="1">
+            <collection name="GLOBAL:php-functions"/>
+        </classMethod>
+        <classMethod class="\Xepozz\InternalMocker\MockerState" method="getDefaultResult" argument="1">
+            <collection name="GLOBAL:php-functions"/>
+        </classMethod>
+        <classMethod class="\Xepozz\InternalMocker\MockerState" method="replaceResult" argument="1">
+            <collection name="GLOBAL:php-functions"/>
+        </classMethod>
+    </definitions>
+</meta-storm>
